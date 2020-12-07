@@ -134,4 +134,41 @@ public class Process {
 		return ret;
 		
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + arrivalTime;
+		result = prime * result + executionTime;
+		result = prime * result + internalCounter;
+		result = prime * result + neededMemory;
+		result = prime * result + ((processName == null) ? 0 : processName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Process other = (Process) obj;
+		if (arrivalTime != other.arrivalTime)
+			return false;
+		if (executionTime != other.executionTime)
+			return false;
+		if (internalCounter != other.internalCounter)
+			return false;
+		if (neededMemory != other.neededMemory)
+			return false;
+		if (processName == null) {
+			if (other.processName != null)
+				return false;
+		} else if (!processName.equals(other.processName))
+			return false;
+		return true;
+	}
 }

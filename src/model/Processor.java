@@ -10,6 +10,7 @@ public class Processor {
 	private int totalMemory;
 	private int occupiedMemory;
 	private final static int MINIMAL_MEMORY_SIZE = 1024;
+	private final static int FREE_MEMORY_SPACE_IDENDIFYER = -1;
 	
 	
 	public Processor(int totalMemory) {
@@ -18,6 +19,7 @@ public class Processor {
 		this.totalMemory = totalMemory;
 		this.occupiedMemory = 0;
 		this.execution = new int[totalMemory];
+		for(int i=0; i<this.totalMemory; i++) this.execution[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER;
 	}
 	
 	/**
@@ -32,10 +34,19 @@ public class Processor {
 		
 		// Check if process can be added:
 		int avaiableMemCounter = 0;
+		
 			// I'M HERE
 		
 		this.occupiedMemory = this.occupiedMemory + p.getNeededMemory();
 		return this.queue.add(p);
+	}
+	
+	public void cleanAllMemory() {
+		
+	}
+	
+	public void deleteProcessFromExecution(int processHash) {
+		
 	}
 	
 	/**
