@@ -20,6 +20,18 @@ public class Process {
 	/** The internal counter. */
 	private int internalCounter;
 	
+	/** The needed memory. */
+	private int neededMemory;
+	
+	/** The Constant xAxisNameStringSeparator. */
+	private final static String xAxisNameStringSeparator = "==================================================";
+	
+	/** The Constant xAxisStringSeparator. */
+	private final static String xAxisStringSeparator = "__________________________________________________";
+	
+	/** The Constant endl. */
+	private final static String endl = "\n";
+	
 	/**
 	 * Instantiates a new process.
 	 * 
@@ -30,17 +42,43 @@ public class Process {
 	 * @param executionTime the execution time
 	 * @param internalCounter the internal counter
 	 */
-	public Process(String processName, int arrivalTime, int executionTime, int internalCounter) {
+	public Process(String processName, int arrivalTime, int executionTime, int neededMemory) {
 		Objects.requireNonNull(processName);
 		if(arrivalTime < 0) throw new NumberFormatException("arrivalTime can't be negative. ");
 		if(executionTime < 0) throw new NumberFormatException("executionTime can't be negative. ");
-		if(internalCounter < 0) throw new NumberFormatException("internalCounter can't be negative. ");
+		if(neededMemory <= 0) throw new NumberFormatException("neededMemory have to be greater than 0");
 		
 		this.arrivalTime = arrivalTime;
 		this.executionTime = executionTime;
-		this.internalCounter = internalCounter;
+		this.internalCounter = 0;
 		this.processName = processName;
+		this.neededMemory = neededMemory;
 	}
+	
+	/**
+	 * Instantiates a new process.
+	 *
+	 * @param p the p
+	 */
+	protected Process(Process p) {
+		this.arrivalTime = p.getArrivalTime();
+		this.executionTime = p.getExecutionTime();
+		this.internalCounter = p.getInternalCounter();
+		this.neededMemory = p.getNeededMemory();
+		this.processName = p.getProcessName();
+	}
+	
+	/**
+	 * Copy.
+	 *
+	 * @return the process
+	 */
+	public Process copy() { return new Process(this); }
+	
+	/**
+	 * Increment internal counter.
+	 */
+	public void incrementInternalCounter() { this.internalCounter++; }
 
 	/**
 	 * Gets the internal counter.
@@ -69,4 +107,31 @@ public class Process {
 	 * @return the process name
 	 */
 	public String getProcessName() { return processName; }
+
+	/**
+	 * Gets the needed memory.
+	 *
+	 * @return the needed memory
+	 */
+	public int getNeededMemory() { return neededMemory; }
+
+	/**
+	 * To string.
+	 *
+	 * @return the string
+	 */
+	@Override
+	public String toString() {
+		String ret = "";
+		ret += Process.xAxisNameStringSeparator; ret += Process.endl;
+		ret += "Process name: " + this.getProcessName(); ret += Process.endl;
+		ret += Process.xAxisNameStringSeparator; ret += Process.endl;
+		ret += "Arrival time: " + this.getArrivalTime(); ret += Process.endl;
+		ret += "Execution time: " + this.getExecutionTime(); ret += Process.endl;
+		ret += "Internal counter: " + this.getInternalCounter(); ret += Process.endl;
+		ret += "Needed memory: " + this.getNeededMemory(); ret += Process.endl;
+		ret += Process.xAxisStringSeparator;
+		return ret;
+		
+	}
 }
