@@ -4,15 +4,20 @@ import java.util.TreeSet;
 
 import model.exceptions.InvalidProcessNeededMemory;
 
-public class Processor {
-	private TreeSet<Process> queue;
-	private int[] execution;
-	private int totalMemory;
-	private int occupiedMemory;
-	private final static int MINIMAL_MEMORY_SIZE = 1024;
-	private final static int FREE_MEMORY_SPACE_IDENDIFYER = -1;
+public abstract class Processor {
+	protected TreeSet<Process> queue;
+	protected int[] execution;
+	protected int totalMemory;
+	protected int occupiedMemory;
+	protected final static int MINIMAL_MEMORY_SIZE = 1024;
+	protected final static int FREE_MEMORY_SPACE_IDENDIFYER = -1;
 	
 	
+	/**
+	 * Instantiates a new processor.
+	 *
+	 * @param totalMemory the total memory
+	 */
 	public Processor(int totalMemory) {
 		if(totalMemory <= Processor.MINIMAL_MEMORY_SIZE) throw new NumberFormatException("totalMemory have to be greater than " + Processor.MINIMAL_MEMORY_SIZE);
 		
@@ -29,21 +34,20 @@ public class Processor {
 	 * @return true, if successful
 	 * @throws InvalidProcessNeededMemory 
 	 */
-	public boolean addProcessToQueue(Process p) throws InvalidProcessNeededMemory {
-		if(p.getNeededMemory() < Processor.MINIMAL_MEMORY_SIZE || p.getNeededMemory() > this.getTotalMemory()) throw new InvalidProcessNeededMemory(p);
-		
-		// Check if process can be added:
-		int avaiableMemCounter = 0;
-		
-			// I'M HERE
-		
-		this.occupiedMemory = this.occupiedMemory + p.getNeededMemory();
-		return this.queue.add(p);
-	}
+	public abstract boolean addProcessToQueue(Process p) throws InvalidProcessNeededMemory;
 	
-	public void cleanAllMemory() {
-		
-	}
+	/**
+	 * Check if process can be added.
+	 *
+	 * @param p the p
+	 * @return true, if successful
+	 */
+	public abstract boolean checkIfProcessCanBeAdded(Process p);
+	
+	/**
+	 * Clean all memory.
+	 */
+	public void cleanAllMemory() { for(int i=0; i<this.totalMemory; i++) this.execution[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER; }
 	
 	public void deleteProcessFromExecution(int processHash) {
 		
