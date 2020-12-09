@@ -9,7 +9,7 @@ import model.exceptions.ProcessAddingException;
 
 /**
  * The Class Processor.
- * @author Jordi Sellés Enríquez
+ * @author Jordi SellÃ©s EnrÃ­quez
  */
 public abstract class Processor {
 	
@@ -63,13 +63,15 @@ public abstract class Processor {
 	 *
 	 * @param p the p
 	 * @return true, if successful
-	 * @throws ProcessAddingException 
+	 * @throws ProcessAddingException the process adding exception
+	 * @throws InvalidProcessNeededMemory the invalid process needed memory
 	 */
-	public void moveProcessFromExecToQueue(Process p) throws ProcessAddingException {
+	public void moveProcessFromExecToQueue(Process p) throws ProcessAddingException, InvalidProcessNeededMemory {
 		if(this.execProcesses.contains(p)) {
 			int processHash = p.hashCode();
 			this.quitProcessFromExecution(processHash);
-			this.execProcesses.remove(p);
+			this.addProcessToQueue(p);
+			return;
 		}
 		throw new ProcessAddingException(p, "The process is not running");
 	}
@@ -103,10 +105,26 @@ public abstract class Processor {
 	 */
 	protected void cleanAllMemory() { for(int i=0; i<this.totalMemory; i++) this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER; }
 	
+	/**
+	 * Checks if is memory clean.
+	 *
+	 * @return true, if is memory clean
+	 */
+	public boolean isMemoryClean() { return execProcesses.isEmpty(); }
+	
 	public void quitProcessFromExecution(int processHash) {
-		throw new RuntimeException("Pendent");
-		//TODO: ESTOY AQUÍ
-		
+		boolean exists = false;
+		for(Process it : this.getExecProcesses()) {
+			if(it.hashCode() == processHash) {
+				exists = true;
+				this.execProcesses.remove(it);
+			}
+		}
+		for(int i=0; i<this.execHashList.length && exists; i++) {
+			if(this.execHashList[i] == processHash) {
+				this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER;
+			}
+		}
 	}
 	
 	/**
@@ -125,6 +143,19 @@ public abstract class Processor {
 	 * @return the total memory
 	 */
 	public int getTotalMemory() { return this.totalMemory; }
+	
+	/**
+	 * Gets the exec processes.
+	 *
+	 * @return the exec processes
+	 */
+	public Set<Process> getExecProcesses(){
+		Set<Process> ret = new HashSet<Process>();
+		for(Process it : this.execProcesses) {
+			ret.add(it.copy());
+		}
+		return ret;
+	}
 	
 	
 }

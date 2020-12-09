@@ -1,2 +1,6 @@
 eclipse.preferences.version=1
+encoding//src/model/Process.java=UTF-8
+encoding//src/model/Processor.java=UTF-8
 encoding//src/model/ProcessorBest.java=UTF-8
+encoding//tests/model/testProcessor.java=UTF-8
+encoding/<project>=UTF-8

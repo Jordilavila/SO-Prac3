@@ -2,6 +2,8 @@ package model;
 
 import static org.junit.Assert.*;
 
+import java.util.Set;
+
 import org.junit.*;
 
 import model.exceptions.InvalidProcessNeededMemory;
@@ -14,7 +16,7 @@ public class testProcessor {
 	@Before
 	public void setUp() {
 		A = new Process("A", 0, 200, 500);
-		B = new Process("B", 0, 500, 500);
+		B = new Process("B", 0, 500, 1000);
 		C = new Process("C", 1, 300, 1500);
 		ryzen5 = new ProcessorBest(2000);
 	}
@@ -26,26 +28,78 @@ public class testProcessor {
 			assertTrue(ryzen5.addProcessToQueue(B));
 			assertTrue(ryzen5.addProcessToQueue(C));
 		} catch (InvalidProcessNeededMemory | ProcessAddingException e) {
-			fail("No se ha podido aÒadir: " + e.getMessage());
+			fail("No se ha podido a√±adir: " + e.getMessage());
 		}
 		//System.out.println("\n" + ryzen5.queue.toString() + "\n");
 		
 		try {
 			ryzen5.addProcessToQueue(B);
-			fail("DebiÛ producirse una excepciÛn");
+			fail("Deb√°a producirse una excepci√≥n");
 		} catch(ProcessAddingException e) {
 			// Bien
 		} catch (InvalidProcessNeededMemory e) {
-			fail("ExcepciÛn incorrecta");
+			fail("Excepci√≥n incorrecta");
 		}
 		
 		try {
 			ryzen5.addProcessToQueue(A.copy());
-			fail("DebiÛ producirse una excepciÛn");
+			fail("Deb√≠a producirse una excepci√≥n");
 		} catch(ProcessAddingException e) {
 			// Bien
 		} catch (InvalidProcessNeededMemory e) {
-			fail("ExcepciÛn incorrecta");
+			fail("Excepci√≥n incorrecta");
 		}
+	}
+	
+	@Test
+	public void testQuitProcessFromExecution() {
+		// Adding process to queue:
+		try {
+			assertTrue(ryzen5.addProcessToQueue(A));
+		} catch(InvalidProcessNeededMemory | ProcessAddingException e) {
+			fail("El proceso ten√≠a que a√±adirse");
+		}
+		
+		// Moving process to exec:
+		try {
+			assertTrue(ryzen5.moveProcessFromQueueToExec(A));
+		} catch (ProcessAddingException e) {
+			fail("Tendr√≠a que haberse a√±adido: " + e.toString());
+		}
+		Set<Process> execProcesses = ryzen5.getExecProcesses();
+		
+		// Returning process to Queue:
+		try {
+			ryzen5.moveProcessFromExecToQueue(A);
+		} catch (ProcessAddingException | InvalidProcessNeededMemory e) {
+			fail("Tendr√≠a que haberse quitado");
+		}
+		assertNotEquals("", execProcesses, ryzen5.getExecProcesses());
+	}
+	
+	@Test
+	public void testCheckIfProcessCanBeAddedBest() throws InvalidProcessNeededMemory, ProcessAddingException {
+		Process r = new Process("r", 0, 1, 500);
+		Process s = new Process("s", 0, 1, 500);
+		Process t = new Process("t", 0, 1, 500);
+		Process u = new Process("u", 0, 1, 400);
+		Process w = new Process("w", 0, 1, 100);
+		ryzen5.addProcessToQueue(r);
+		ryzen5.addProcessToQueue(s);
+		ryzen5.addProcessToQueue(t);
+		ryzen5.addProcessToQueue(u);
+		ryzen5.addProcessToQueue(w);
+		
+		ryzen5.moveProcessFromQueueToExec(r);
+		ryzen5.moveProcessFromQueueToExec(s);
+		ryzen5.moveProcessFromQueueToExec(t);
+		ryzen5.moveProcessFromQueueToExec(u);
+		
+		ryzen5.moveProcessFromExecToQueue(s);
+		
+		ryzen5.moveProcessFromQueueToExec(w);
+		
+		System.out.println(ryzen5.execProcesses.toString());
+		fail("Not implemented");
 	}
 }

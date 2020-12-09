@@ -18,42 +18,55 @@ public class ProcessorBest extends Processor {
 	public ProcessorBest(int totalMemory) {
 		super(totalMemory);
 	}
-	
+
 	/*
 	 * Unos apuntes...
 	 * Este objeto debe de añadir procesos en el hueco más ajustado al tamaño del proceso.
 	 * Por esto, me va a tocar revisar el método siguiente.
 	 */
 
-	/**
-	 * Check where process can be added.
-	 *
-	 * @param p the process
-	 * @return the position where we can add it. If we can't, returns -1
-	 */
 	@Override
 	public int checkWhereProcessCanBeAdded(Process p) {
 		Objects.requireNonNull(p);
 		int avaiableMemCounter = 0;
-		boolean cont = true, protectInit = false;
+		boolean protectInit = false;
 		int initPosFreeMem = 0;
+		int lastInitPosFreeMem = -1;
+		int lastSize = 0;
+
+		if(this.isMemoryClean()) {
+			return 0;
+		}
 		
-		for(int i=0; i<this.getTotalMemory() && cont; i++) {
+
+		for(int i=0; i<this.getTotalMemory(); i++) {
+			if(i == 500) {
+				int x = 0;
+			}
+			// Fallo por aqui
 			if(this.checkFreeMemoryPosition(this.execHashList[i])) {
 				avaiableMemCounter++;
 				if(!protectInit) {
 					initPosFreeMem = i;
-					protectInit = false;
+					protectInit = true;
 				}
-			} else if(!this.checkFreeMemoryPosition(this.execHashList[i]) &&  this.checkFreeMemoryPosition(this.execHashList[i - 1])) {
-				if(avaiableMemCounter >= p.getNeededMemory()) {
-					return initPosFreeMem;
-				}
-				else return -1;
+
+			} 
+			if(i > 0) {
+				if(!this.checkFreeMemoryPosition(this.execHashList[i]) &&  this.checkFreeMemoryPosition(this.execHashList[i - 1])) {
+					if(avaiableMemCounter >= p.getNeededMemory()) {
+						protectInit = false;
+						if(lastSize > avaiableMemCounter) {
+							lastSize = avaiableMemCounter;
+							lastInitPosFreeMem = initPosFreeMem;
+						}
+					}
+				} 
 			}
 		}
-		throw new RuntimeException("Unexpected");
+		return lastInitPosFreeMem;
 	}
+	
 
 	/**
 	 * Adds the process to exec.

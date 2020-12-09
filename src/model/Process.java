@@ -4,7 +4,7 @@ import java.util.Objects;
 
 /**
  * The Class Process.
- * @author Jordi Sell�s Enr�quez
+ * @author Jordi Sellés Enríquez
  */
 public class Process {
 	
