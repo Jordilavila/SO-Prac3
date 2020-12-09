@@ -19,6 +19,7 @@ public class testProcess {
 			+ "Execution time: 20\n"
 			+ "Internal counter: 0\n"
 			+ "Needed memory: 200\n"
+			+ "Status: Waiting\n"
 			+ "__________________________________________________";
 	
 	

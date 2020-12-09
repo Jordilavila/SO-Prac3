@@ -23,6 +23,9 @@ public class Process {
 	/** The needed memory. */
 	private int neededMemory;
 	
+	/** The in execution. */
+	private boolean inExecution;
+	
 	/** The Constant xAxisNameStringSeparator. */
 	private final static String xAxisNameStringSeparator = "==================================================";
 	
@@ -53,12 +56,13 @@ public class Process {
 		this.internalCounter = 0;
 		this.processName = processName;
 		this.neededMemory = neededMemory;
+		this.inExecution = false;
 	}
 	
 	/**
 	 * Instantiates a new process.
 	 *
-	 * @param p the p
+	 * @param p the process
 	 */
 	protected Process(Process p) {
 		this.arrivalTime = p.getArrivalTime();
@@ -114,6 +118,12 @@ public class Process {
 	 * @return the needed memory
 	 */
 	public int getNeededMemory() { return neededMemory; }
+	
+	public boolean getInExecution() { return this.inExecution; }
+	
+	public void changeToExecution() { this.inExecution = true; }
+	
+	public void quitFromExecution() { this.inExecution = false; }
 
 	/**
 	 * To string.
@@ -130,6 +140,7 @@ public class Process {
 		ret += "Execution time: " + this.getExecutionTime(); ret += Process.endl;
 		ret += "Internal counter: " + this.getInternalCounter(); ret += Process.endl;
 		ret += "Needed memory: " + this.getNeededMemory(); ret += Process.endl;
+		ret += "Status: " + ((this.getInExecution()) ? "In execution" : "Waiting"); ret += Process.endl;
 		ret += Process.xAxisStringSeparator;
 		return ret;
 		
