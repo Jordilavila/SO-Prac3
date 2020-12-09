@@ -1,29 +1,20 @@
 package model;
 
-import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.ProcessAddingException;
 
+/**
+ * The Class ProcessorBest.
+ * @author Jordi Sellés Enríquez
+ */
 public class ProcessorBest extends Processor {
 
+	/**
+	 * Instantiates a new ProcessorBest.
+	 *
+	 * @param totalMemory the total memory
+	 */
 	public ProcessorBest(int totalMemory) {
 		super(totalMemory);
-	}
-	
-	/**
-	 * Adds the process to queue.
-	 *
-	 * @param p the process
-	 * @return true, if successful
-	 * @throws InvalidProcessNeededMemory 
-	 * @throws ProcessAddingException 
-	 */
-	@Override
-	public boolean addProcessToQueue(Process p) throws InvalidProcessNeededMemory, ProcessAddingException {
-		if(p.getNeededMemory() < Processor.MINIMAL_PROCESS_MEMORY_SIZE || p.getNeededMemory() > this.getTotalMemory()) throw new InvalidProcessNeededMemory(p);
-		if(this.queue.add(p)) {
-			return true;
-		}
-		throw new ProcessAddingException(p, "Process already exists");
 	}
 
 	/**

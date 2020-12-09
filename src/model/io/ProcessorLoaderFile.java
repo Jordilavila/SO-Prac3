@@ -8,6 +8,7 @@ import model.Processor;
 import model.Process;
 import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.MemoryPracticeIOException;
+import model.exceptions.ProcessAddingException;
 
 public class ProcessorLoaderFile implements IProcessorLoader {
 	private BufferedReader br;
@@ -19,8 +20,16 @@ public class ProcessorLoaderFile implements IProcessorLoader {
 	
 	// process name arrivalTime executionTime neededMemory
 
+	/**
+	 * Load processes.
+	 *
+	 * @param p the p
+	 * @throws MemoryPracticeIOException the memory practice IO exception
+	 * @throws InvalidProcessNeededMemory the invalid process needed memory
+	 * @throws ProcessAddingException the process adding exception
+	 */
 	@Override
-	public void loadProcesses(Processor p) throws MemoryPracticeIOException, InvalidProcessNeededMemory {
+	public void loadProcesses(Processor p) throws MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException {
 		try {
 			String line;
 			while((line = this.br.readLine()) != null) {

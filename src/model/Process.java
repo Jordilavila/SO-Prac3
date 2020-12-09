@@ -37,13 +37,11 @@ public class Process {
 	
 	/**
 	 * Instantiates a new process.
-	 * 
-	 * All params have to be positive. If not, it will throw an Exception
 	 *
 	 * @param processName the process name
 	 * @param arrivalTime the arrival time
 	 * @param executionTime the execution time
-	 * @param internalCounter the internal counter
+	 * @param neededMemory the needed memory
 	 */
 	public Process(String processName, int arrivalTime, int executionTime, int neededMemory) {
 		Objects.requireNonNull(processName);
@@ -119,10 +117,21 @@ public class Process {
 	 */
 	public int getNeededMemory() { return neededMemory; }
 	
+	/**
+	 * Gets the in execution.
+	 *
+	 * @return the in execution
+	 */
 	public boolean getInExecution() { return this.inExecution; }
 	
+	/**
+	 * Change to execution.
+	 */
 	public void changeToExecution() { this.inExecution = true; }
 	
+	/**
+	 * Quit from execution.
+	 */
 	public void quitFromExecution() { this.inExecution = false; }
 
 	/**

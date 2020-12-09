@@ -1,21 +1,38 @@
 package model;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.ProcessAddingException;
 
+/**
+ * The Class Processor.
+ * @author Jordi Sellés Enríquez
+ */
 public abstract class Processor {
-	protected TreeSet<Process> queue;
-	protected int[] execHashList;
-	protected Set<Process> execProcesses;
-	protected int totalMemory;
-	protected final static int MINIMAL_PROCESSOR_MEMORY_SIZE = 1024;
-	protected final static int MINIMAL_PROCESS_MEMORY_SIZE = 100;
-	protected final static int FREE_MEMORY_SPACE_IDENDIFYER = -1;
 	
+	/** The queue. */
+	protected Set<Process> queue;
+	
+	/** The exec hash list. */
+	protected int[] execHashList;
+	
+	/** The exec processes. */
+	protected Set<Process> execProcesses;
+	
+	/** The total memory. */
+	protected int totalMemory;
+	
+	/** The Constant MINIMAL_PROCESSOR_MEMORY_SIZE. */
+	protected final static int MINIMAL_PROCESSOR_MEMORY_SIZE = 1024;
+	
+	/** The Constant MINIMAL_PROCESS_MEMORY_SIZE. */
+	protected final static int MINIMAL_PROCESS_MEMORY_SIZE = 100;
+	
+	/** The Constant FREE_MEMORY_SPACE_IDENDIFYER. */
+	protected final static int FREE_MEMORY_SPACE_IDENDIFYER = -1;
 	
 	/**
 	 * Instantiates a new processor.
@@ -27,7 +44,7 @@ public abstract class Processor {
 		
 		this.totalMemory = totalMemory;
 		this.execHashList = new int[totalMemory];
-		this.queue = new TreeSet<Process>();
+		this.queue = new LinkedHashSet<Process>();
 		this.execProcesses = new HashSet<Process>();
 		for(int i=0; i<this.totalMemory; i++) this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER;
 	}
@@ -42,7 +59,13 @@ public abstract class Processor {
 	 * @throws InvalidProcessNeededMemory 
 	 * @throws ProcessAddingException 
 	 */
-	public abstract boolean addProcessToQueue(Process p) throws InvalidProcessNeededMemory, ProcessAddingException;
+	public boolean addProcessToQueue(Process p) throws InvalidProcessNeededMemory, ProcessAddingException {
+		if(p.getNeededMemory() < Processor.MINIMAL_PROCESS_MEMORY_SIZE || p.getNeededMemory() > this.getTotalMemory()) throw new InvalidProcessNeededMemory(p);
+		if(this.queue.add(p)) {
+			return true;
+		}
+		throw new ProcessAddingException(p, "Process already exists");
+	}
 	
 	/**
 	 * Check where process can be added.
