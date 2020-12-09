@@ -11,7 +11,7 @@ public class testProcess {
 	int process1arrivalTime, process2arrivalTime;
 	int process1neededMemory, process2neededMemory;
 	
-	String process1expectedToString = 
+	String process1expectedInfo = 
 		      "==================================================\n"
 			+ "Process name: A\n"
 			+ "==================================================\n"
@@ -21,6 +21,8 @@ public class testProcess {
 			+ "Needed memory: 200\n"
 			+ "Status: Waiting\n"
 			+ "__________________________________________________";
+	
+	String process1expectedToString = "[0 A 199]";
 	
 	
 	@Before
@@ -47,8 +49,15 @@ public class testProcess {
 	 * With this test I'm checking the getters
 	 */
 	@Test
+	public void testInfo() {
+		Process A = new Process(process1name, process1arrivalTime, process1executionTime, process1neededMemory);
+		assertEquals(process1expectedInfo, A.info());
+	}
+	
+	@Test
 	public void testToString() {
 		Process A = new Process(process1name, process1arrivalTime, process1executionTime, process1neededMemory);
+		A.setInitialPos(0);
 		assertEquals(process1expectedToString, A.toString());
 	}
 }

@@ -1,10 +1,12 @@
 package model;
 
+import java.util.Objects;
+
 import model.exceptions.ProcessAddingException;
 
 /**
  * The Class ProcessorBest.
- * @author Jordi Sell�s Enr�quez
+ * @author Jordi Sellés Enríquez
  */
 public class ProcessorBest extends Processor {
 
@@ -16,6 +18,12 @@ public class ProcessorBest extends Processor {
 	public ProcessorBest(int totalMemory) {
 		super(totalMemory);
 	}
+	
+	/*
+	 * Unos apuntes...
+	 * Este objeto debe de añadir procesos en el hueco más ajustado al tamaño del proceso.
+	 * Por esto, me va a tocar revisar el método siguiente.
+	 */
 
 	/**
 	 * Check where process can be added.
@@ -25,6 +33,7 @@ public class ProcessorBest extends Processor {
 	 */
 	@Override
 	public int checkWhereProcessCanBeAdded(Process p) {
+		Objects.requireNonNull(p);
 		int avaiableMemCounter = 0;
 		boolean cont = true, protectInit = false;
 		int initPosFreeMem = 0;
@@ -55,12 +64,13 @@ public class ProcessorBest extends Processor {
 	 */
 	@Override
 	public boolean moveProcessFromQueueToExec(Process p) throws ProcessAddingException {
+		Objects.requireNonNull(p);
 		int checkWhereProcessCanBeAddedReturned = this.checkWhereProcessCanBeAdded(p);
 		if(checkWhereProcessCanBeAddedReturned != -1) {
 			for(int i = checkWhereProcessCanBeAddedReturned; i<p.getNeededMemory(); i++) {
 				this.execHashList[i] = p.hashCode();
 			}
-			p.changeToExecution();
+			p.setInitialPos(checkWhereProcessCanBeAddedReturned);
 			if(!this.queue.remove(p)) throw new ProcessAddingException(p, "Process not exists");
 			if(this.execProcesses.add(p)) {
 				return true;

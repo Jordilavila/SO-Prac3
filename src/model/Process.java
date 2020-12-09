@@ -4,7 +4,7 @@ import java.util.Objects;
 
 /**
  * The Class Process.
- * @author Jordi Sellés Enríquez
+ * @author Jordi Sellï¿½s Enrï¿½quez
  */
 public class Process {
 	
@@ -22,6 +22,9 @@ public class Process {
 	
 	/** The needed memory. */
 	private int neededMemory;
+	
+	/** The initial pos. */
+	private int initialPos;
 	
 	/** The in execution. */
 	private boolean inExecution;
@@ -55,6 +58,7 @@ public class Process {
 		this.processName = processName;
 		this.neededMemory = neededMemory;
 		this.inExecution = false;
+		this.initialPos = -1;
 	}
 	
 	/**
@@ -127,20 +131,19 @@ public class Process {
 	/**
 	 * Change to execution.
 	 */
-	public void changeToExecution() { this.inExecution = true; }
+	private void changeToExecution() { this.inExecution = true; }
 	
 	/**
 	 * Quit from execution.
 	 */
 	public void quitFromExecution() { this.inExecution = false; }
-
+	
 	/**
-	 * To string.
+	 * Info.
 	 *
-	 * @return the string
+	 * @return A string with detailed process info
 	 */
-	@Override
-	public String toString() {
+	public String info() {
 		String ret = "";
 		ret += Process.xAxisNameStringSeparator; ret += Process.endl;
 		ret += "Process name: " + this.getProcessName(); ret += Process.endl;
@@ -152,6 +155,16 @@ public class Process {
 		ret += "Status: " + ((this.getInExecution()) ? "In execution" : "Waiting"); ret += Process.endl;
 		ret += Process.xAxisStringSeparator;
 		return ret;
+	}
+
+	/**
+	 * To string.
+	 *
+	 * @return the string
+	 */
+	@Override
+	public String toString() {
+		return ("[" + this.getInitialPos() + " " + this.getProcessName() + " " + (this.getNeededMemory() - 1) + "]");
 		
 	}
 
@@ -190,5 +203,22 @@ public class Process {
 		} else if (!processName.equals(other.processName))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Gets the initial pos.
+	 *
+	 * @return the initial pos
+	 */
+	public int getInitialPos() { return initialPos; }
+
+	/**
+	 * Sets the initial pos. Also change process to execution.
+	 *
+	 * @param initialPos the new initial pos
+	 */
+	public void setInitialPos(int initialPos) {
+		this.initialPos = initialPos;
+		this.changeToExecution();
 	}
 }
