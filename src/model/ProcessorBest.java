@@ -54,7 +54,7 @@ public class ProcessorBest extends Processor {
 	 * @throws ProcessAddingException 
 	 */
 	@Override
-	public boolean addProcessToExec(Process p) throws ProcessAddingException {
+	public boolean moveProcessFromQueueToExec(Process p) throws ProcessAddingException {
 		int checkWhereProcessCanBeAddedReturned = this.checkWhereProcessCanBeAdded(p);
 		if(checkWhereProcessCanBeAddedReturned != -1) {
 			for(int i = checkWhereProcessCanBeAddedReturned; i<p.getNeededMemory(); i++) {

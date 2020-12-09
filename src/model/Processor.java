@@ -49,7 +49,30 @@ public abstract class Processor {
 		for(int i=0; i<this.totalMemory; i++) this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER;
 	}
 	
-	public abstract boolean addProcessToExec(Process p) throws ProcessAddingException;
+	/**
+	 * Move process from queue to exec.
+	 *
+	 * @param p the p
+	 * @return true, if successful
+	 * @throws ProcessAddingException the process adding exception
+	 */
+	public abstract boolean moveProcessFromQueueToExec(Process p) throws ProcessAddingException;
+	
+	/**
+	 * Move process from execution to queue.
+	 *
+	 * @param p the p
+	 * @return true, if successful
+	 * @throws ProcessAddingException 
+	 */
+	public void moveProcessFromExecToQueue(Process p) throws ProcessAddingException {
+		if(this.execProcesses.contains(p)) {
+			int processHash = p.hashCode();
+			this.quitProcessFromExecution(processHash);
+			this.execProcesses.remove(p);
+		}
+		throw new ProcessAddingException(p, "The process is not running");
+	}
 	
 	/**
 	 * Adds the process to queue.
@@ -78,9 +101,11 @@ public abstract class Processor {
 	/**
 	 * Clean all memory.
 	 */
-	public void cleanAllMemory() { for(int i=0; i<this.totalMemory; i++) this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER; }
+	protected void cleanAllMemory() { for(int i=0; i<this.totalMemory; i++) this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER; }
 	
-	public void deleteProcessFromExecution(int processHash) {
+	public void quitProcessFromExecution(int processHash) {
+		throw new RuntimeException("Pendent");
+		//TODO: ESTOY AQUÍ
 		
 	}
 	
@@ -90,7 +115,7 @@ public abstract class Processor {
 	 * @param position the position
 	 * @return true, if successful
 	 */
-	public boolean checkFreeMemoryPosition(int position) {
+	protected boolean checkFreeMemoryPosition(int position) {
 		return ((position == Processor.FREE_MEMORY_SPACE_IDENDIFYER) ? true : false);
 	}
 	

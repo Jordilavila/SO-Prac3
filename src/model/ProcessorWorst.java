@@ -13,7 +13,7 @@ public class ProcessorWorst extends Processor {
 	}
 
 	@Override
-	public boolean addProcessToExec(Process p) throws ProcessAddingException {
+	public boolean moveProcessFromQueueToExec(Process p) throws ProcessAddingException {
 		// TODO Esbozo de método generado automáticamente
 		return false;
 	}

@@ -38,5 +38,14 @@ public class testProcessor {
 		} catch (InvalidProcessNeededMemory e) {
 			fail("Excepción incorrecta");
 		}
+		
+		try {
+			ryzen5.addProcessToQueue(A.copy());
+			fail("Debió producirse una excepción");
+		} catch(ProcessAddingException e) {
+			// Bien
+		} catch (InvalidProcessNeededMemory e) {
+			fail("Excepción incorrecta");
+		}
 	}
 }
