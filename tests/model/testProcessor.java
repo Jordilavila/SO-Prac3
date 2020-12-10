@@ -10,7 +10,7 @@ import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.ProcessAddingException;
 
 public class testProcessor {
-	Processor ryzen5;
+	Processor ryzen5, i5;
 	Process A, B, C;
 	
 	@Before
@@ -19,6 +19,7 @@ public class testProcessor {
 		B = new Process("B", 0, 500, 1000);
 		C = new Process("C", 1, 300, 1500);
 		ryzen5 = new ProcessorBest(2000);
+		i5 = new ProcessorWorst(2000);
 	}
 	
 	@Test
@@ -91,27 +92,51 @@ public class testProcessor {
 		ryzen5.addProcessToQueue(w);
 		
 		assertTrue(ryzen5.moveProcessFromQueueToExec(r));
-		System.out.println(ryzen5.execProcesses.toString());
 		assertTrue(ryzen5.moveProcessFromQueueToExec(s));
-		System.out.println(ryzen5.execProcesses.toString());
 		assertTrue(ryzen5.moveProcessFromQueueToExec(t));
-		System.out.println(ryzen5.execProcesses.toString());
 		assertTrue(ryzen5.moveProcessFromQueueToExec(u));
-		System.out.println(ryzen5.execProcesses.toString());
 		
 		ryzen5.moveProcessFromExecToQueue(s);
-		System.out.println(ryzen5.execProcesses.toString());
 		
 		ryzen5.moveProcessFromQueueToExec(w);
-		System.out.println(w.getInitialPos());
 		
-		// [ InitPos NAME NeededMemory ]
+		// [ InitPos NAME FinalPos ]
 		System.out.println(ryzen5.execProcesses.toString());
-		//fail("Not implemented");
 		
 		assertEquals(0, r.getInitialPos());
 		assertEquals(1000, t.getInitialPos());
 		assertEquals(1500, u.getInitialPos());
 		assertEquals(1900, w.getInitialPos());
+	}
+	
+	@Test
+	public void testCheckIfProcessCanBeAddedWorst() throws InvalidProcessNeededMemory, ProcessAddingException {
+		Process r = new Process("r", 0, 1, 500);
+		Process s = new Process("s", 0, 1, 500);
+		Process t = new Process("t", 0, 1, 500);
+		Process u = new Process("u", 0, 1, 400);
+		Process w = new Process("w", 0, 1, 100);
+		i5.addProcessToQueue(r);
+		i5.addProcessToQueue(s);
+		i5.addProcessToQueue(t);
+		i5.addProcessToQueue(u);
+		i5.addProcessToQueue(w);
+		
+		assertTrue(i5.moveProcessFromQueueToExec(r));
+		assertTrue(i5.moveProcessFromQueueToExec(s));
+		assertTrue(i5.moveProcessFromQueueToExec(t));
+		assertTrue(i5.moveProcessFromQueueToExec(u));
+		
+		i5.moveProcessFromExecToQueue(s);
+		
+		i5.moveProcessFromQueueToExec(w);
+		
+		// [ InitPos NAME FinalPos ]
+		System.out.println(i5.execProcesses.toString());
+		
+		assertEquals(0, r.getInitialPos());
+		assertEquals(1000, t.getInitialPos());
+		assertEquals(1500, u.getInitialPos());
+		assertEquals(500, w.getInitialPos());
 	}
 }

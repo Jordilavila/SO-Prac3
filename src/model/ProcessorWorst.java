@@ -1,10 +1,12 @@
 package model;
 
-import model.exceptions.ProcessAddingException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * The Class ProcessorWorst.
- * @author Jordi Sellés Enríquez
+ * @author Jordi SellÃ©s EnrÃ­quez
  */
 public class ProcessorWorst extends Processor {
 
@@ -12,16 +14,33 @@ public class ProcessorWorst extends Processor {
 		super(totalMemory);
 	}
 
+	/**
+	 * Check where process can be added.
+	 *
+	 * @param p the process
+	 * @return the int
+	 */
 	@Override
-	public boolean moveProcessFromQueueToExec(Process p) throws ProcessAddingException {
-		// TODO Esbozo de método generado automáticamente
-		return false;
-	}
-
-	@Override
-	public int checkWhereProcessCanBeAdded(Process p) {
-		// TODO Esbozo de método generado automáticamente
-		return -1;
+	protected int checkWhereProcessCanBeAdded(Process p) {
+		Objects.requireNonNull(p);
+		Map<Integer, Integer> emptySpaces = this.lookForEmptySpaces();
+		if(emptySpaces.isEmpty()) { return 0; }
+		int lastSize = 0;
+		int returnKey = -1;
+		Set<Integer> setKeys = emptySpaces.keySet();
+		for(Integer it : setKeys) {
+			if(emptySpaces.containsKey(it)) {
+				int actualSize = emptySpaces.get(it);
+				if(actualSize >= p.getNeededMemory()) {
+					if(lastSize < actualSize) {
+						lastSize = actualSize;
+						returnKey = it.intValue();
+					}
+				}
+			}
+		}
+		if(lastSize == this.totalMemory) { return -1; }
+		return returnKey;
 	}
 
 }

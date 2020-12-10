@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import model.exceptions.InvalidProcessNeededMemory;
@@ -58,7 +59,22 @@ public abstract class Processor {
 	 * @return true, if successful
 	 * @throws ProcessAddingException the process adding exception
 	 */
-	public abstract boolean moveProcessFromQueueToExec(Process p) throws ProcessAddingException;
+	public boolean moveProcessFromQueueToExec(Process p) throws ProcessAddingException {
+		Objects.requireNonNull(p);
+		int checkWhereProcessCanBeAddedReturned = this.checkWhereProcessCanBeAdded(p);
+		if(checkWhereProcessCanBeAddedReturned != -1) {
+			for(int i = checkWhereProcessCanBeAddedReturned; i<(p.getNeededMemory() + checkWhereProcessCanBeAddedReturned); i++) {
+				this.execHashList[i] = p.hashCode();
+			}
+			p.setInitialPos(checkWhereProcessCanBeAddedReturned);
+			if(!this.queue.remove(p)) throw new ProcessAddingException(p, "Process not exists");
+			if(this.execProcesses.add(p)) {
+				return true;
+			}
+			throw new ProcessAddingException(p, "Process already in execution");
+		}
+		return false;
+	}
 	
 	/**
 	 * Move process from execution to queue.
@@ -101,7 +117,7 @@ public abstract class Processor {
 	 * @return a map with count and size of empty spaces. 
 	 * If there aren't anyone
 	 */
-	public Map<Integer, Integer> lookForEmptySpaces(){
+	protected Map<Integer, Integer> lookForEmptySpaces(){
 		Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
 		boolean protectInit = false;
 		int emptySpaceSize = 0;
@@ -140,7 +156,7 @@ public abstract class Processor {
 	 * @param p the process
 	 * @return the position where we can add it, if successful. Otherwise, -1.
 	 */
-	public abstract int checkWhereProcessCanBeAdded(Process p);
+	protected abstract int checkWhereProcessCanBeAdded(Process p);
 	
 	/**
 	 * Clean all memory.
@@ -154,7 +170,12 @@ public abstract class Processor {
 	 */
 	public boolean isMemoryClean() { return execProcesses.isEmpty(); }
 	
-	public void quitProcessFromExecution(int processHash) {
+	/**
+	 * Quit process from execution.
+	 *
+	 * @param processHash the process hash
+	 */
+	protected void quitProcessFromExecution(int processHash) {
 		boolean exists = false;
 		for(Process it : this.getExecProcesses()) {
 			if(it.hashCode() == processHash) {
