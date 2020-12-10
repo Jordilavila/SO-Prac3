@@ -1,7 +1,9 @@
 package model;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import model.exceptions.InvalidProcessNeededMemory;
@@ -71,6 +73,7 @@ public abstract class Processor {
 			int processHash = p.hashCode();
 			this.quitProcessFromExecution(processHash);
 			this.addProcessToQueue(p);
+			p.quitFromExecution();
 			return;
 		}
 		throw new ProcessAddingException(p, "The process is not running");
@@ -90,6 +93,45 @@ public abstract class Processor {
 			return true;
 		}
 		throw new ProcessAddingException(p, "Process already exists");
+	}
+	
+	/**
+	 * Look for empty spaces.
+	 *
+	 * @return a map with count and size of empty spaces. 
+	 * If there aren't anyone
+	 */
+	public Map<Integer, Integer> lookForEmptySpaces(){
+		Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+		boolean protectInit = false;
+		int emptySpaceSize = 0;
+		int lastKey = 0;
+		// Check if memory is clean and returns a null hashmap if successful:
+		if(this.isMemoryClean()) { return ret; }
+		
+		for(int i=0; i<this.totalMemory; i++) {
+			if(this.checkFreeMemoryPosition(this.execHashList[i])) {
+				emptySpaceSize++;
+				if(!protectInit) { // Creamos una nueva entrada
+					ret.put(i, emptySpaceSize);
+					protectInit = true;
+					lastKey = i;
+				} else {
+					ret.replace(lastKey, emptySpaceSize);
+				}
+			}
+			
+			if(i>0) {
+				// Si la posición actual está ocupada y la anterior está libre...
+				if(!this.checkFreeMemoryPosition(this.execHashList[i]) && this.checkFreeMemoryPosition(this.execHashList[i - 1])) {
+					protectInit = false;
+					emptySpaceSize = 0;
+				}
+			}
+			
+		}
+		
+		return ret;
 	}
 	
 	/**

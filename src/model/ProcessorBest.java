@@ -1,7 +1,7 @@
 package model;
 
 import java.util.Objects;
-import java.util.HashMap;
+import java.util.Set;
 import java.util.Map;
 
 import model.exceptions.ProcessAddingException;
@@ -28,64 +28,38 @@ public class ProcessorBest extends Processor {
 	 * Por esto, me va a tocar revisar el método siguiente.
 	 */
 	
-	public int mejorAjuste() {
-		int i = 0;
-		int initBloque = -1;
-		int tamMenorBloque = -1;
-		for(int bloque : this.execHashList) {
-		
-		}
-		return tamMenorBloque;
-	}
 	
-	// CREAR MÉTODO QUE DEVUELVA UN MAP CON ID INT QUE SEA LA POSICIÓN DE CADA BLOQUE VACÍO. Y EL DATO SERÁ EL TAMAÑO DE DICHO BLOQUE
-	// EN CASO DE QUE LA MEMORIA ESTÉ LLENA, DEVOLVERÁ EL IDENTIFICADOR -1
-	public Map<Integer, Integer> lookForEmptySpaces(){
-		Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
-		
-		return ret;
-	}
 
 	@Override
 	public int checkWhereProcessCanBeAdded(Process p) {
 		Objects.requireNonNull(p);
-		int avaiableMemCounter = 0;
-		boolean protectInit = false;
-		int initPosFreeMem = 0;
-		int lastInitPosFreeMem = -1;
-		int lastSize = 0;
-
-		if(this.isMemoryClean()) {
-			return 0;
+		Map<Integer, Integer> emptySpaces = this.lookForEmptySpaces();
+		
+		if(emptySpaces.isEmpty()) { return 0; }
+		
+		int lastSize = this.totalMemory;
+		int returnKey = -1;
+		Set<Integer> setKeys = emptySpaces.keySet();
+		
+		for(Integer it : setKeys) {
+			if(emptySpaces.containsKey(it)) {
+				int actualSize = emptySpaces.get(it);
+				if(actualSize >= p.getNeededMemory()) {
+					if(lastSize > actualSize) {
+						lastSize = actualSize;
+						returnKey = it.intValue();
+					}
+				}
+			}
 		}
 		
-
-		for(int i=0; i<this.getTotalMemory(); i++) {
-			if(i == 500) {
-				int x = 0;
-			}
-			// Fallo por aqui
-			if(this.checkFreeMemoryPosition(this.execHashList[i])) {
-				avaiableMemCounter++;
-				if(!protectInit) {
-					initPosFreeMem = i;
-					protectInit = true;
-				}
-
-			} 
-			if(i > 0) {
-				if(!this.checkFreeMemoryPosition(this.execHashList[i]) &&  this.checkFreeMemoryPosition(this.execHashList[i - 1])) {
-					if(avaiableMemCounter >= p.getNeededMemory()) {
-						protectInit = false;
-						if(lastSize > avaiableMemCounter) {
-							lastSize = avaiableMemCounter;
-							lastInitPosFreeMem = initPosFreeMem;
-						}
-					}
-				} 
-			}
+		for(int i = 1; i<emptySpaces.size(); i++) {
+			
 		}
-		return lastInitPosFreeMem;
+		
+		if(lastSize == this.totalMemory) { return -1; }
+		
+		return returnKey;
 	}
 	
 
@@ -101,7 +75,7 @@ public class ProcessorBest extends Processor {
 		Objects.requireNonNull(p);
 		int checkWhereProcessCanBeAddedReturned = this.checkWhereProcessCanBeAdded(p);
 		if(checkWhereProcessCanBeAddedReturned != -1) {
-			for(int i = checkWhereProcessCanBeAddedReturned; i<p.getNeededMemory(); i++) {
+			for(int i = checkWhereProcessCanBeAddedReturned; i<(p.getNeededMemory() + checkWhereProcessCanBeAddedReturned); i++) {
 				this.execHashList[i] = p.hashCode();
 			}
 			p.setInitialPos(checkWhereProcessCanBeAddedReturned);

@@ -90,16 +90,28 @@ public class testProcessor {
 		ryzen5.addProcessToQueue(u);
 		ryzen5.addProcessToQueue(w);
 		
-		ryzen5.moveProcessFromQueueToExec(r);
-		ryzen5.moveProcessFromQueueToExec(s);
-		ryzen5.moveProcessFromQueueToExec(t);
-		ryzen5.moveProcessFromQueueToExec(u);
+		assertTrue(ryzen5.moveProcessFromQueueToExec(r));
+		System.out.println(ryzen5.execProcesses.toString());
+		assertTrue(ryzen5.moveProcessFromQueueToExec(s));
+		System.out.println(ryzen5.execProcesses.toString());
+		assertTrue(ryzen5.moveProcessFromQueueToExec(t));
+		System.out.println(ryzen5.execProcesses.toString());
+		assertTrue(ryzen5.moveProcessFromQueueToExec(u));
+		System.out.println(ryzen5.execProcesses.toString());
 		
 		ryzen5.moveProcessFromExecToQueue(s);
+		System.out.println(ryzen5.execProcesses.toString());
 		
 		ryzen5.moveProcessFromQueueToExec(w);
+		System.out.println(w.getInitialPos());
 		
+		// [ InitPos NAME NeededMemory ]
 		System.out.println(ryzen5.execProcesses.toString());
-		fail("Not implemented");
+		//fail("Not implemented");
+		
+		assertEquals(0, r.getInitialPos());
+		assertEquals(1000, t.getInitialPos());
+		assertEquals(1500, u.getInitialPos());
+		assertEquals(1900, w.getInitialPos());
 	}
 }

@@ -136,7 +136,10 @@ public class Process {
 	/**
 	 * Quit from execution.
 	 */
-	public void quitFromExecution() { this.inExecution = false; }
+	public void quitFromExecution() {
+		this.setInitialPos(-1);
+		this.inExecution = false; 
+	}
 	
 	/**
 	 * Info.
@@ -164,8 +167,8 @@ public class Process {
 	 */
 	@Override
 	public String toString() {
-		return ("[" + this.getInitialPos() + " " + this.getProcessName() + " " + (this.getNeededMemory() - 1) + "]");
-		
+		return ("[" + this.getInitialPos() + " " + this.getProcessName() + " " + (this.getInitialPos() + this.getNeededMemory()) + "]");
+		// [ InitPos NAME FinalPos ]
 	}
 
 	@Override
