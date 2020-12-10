@@ -1,6 +1,8 @@
 package model;
 
 import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 import model.exceptions.ProcessAddingException;
 
@@ -9,6 +11,7 @@ import model.exceptions.ProcessAddingException;
  * @author Jordi Sellés Enríquez
  */
 public class ProcessorBest extends Processor {
+	// https://1984.lsi.us.es/wiki-ssoo/index.php/Implementaci%C3%B3n_de_ajustes_en_Java
 
 	/**
 	 * Instantiates a new ProcessorBest.
@@ -24,6 +27,24 @@ public class ProcessorBest extends Processor {
 	 * Este objeto debe de añadir procesos en el hueco más ajustado al tamaño del proceso.
 	 * Por esto, me va a tocar revisar el método siguiente.
 	 */
+	
+	public int mejorAjuste() {
+		int i = 0;
+		int initBloque = -1;
+		int tamMenorBloque = -1;
+		for(int bloque : this.execHashList) {
+		
+		}
+		return tamMenorBloque;
+	}
+	
+	// CREAR MÉTODO QUE DEVUELVA UN MAP CON ID INT QUE SEA LA POSICIÓN DE CADA BLOQUE VACÍO. Y EL DATO SERÁ EL TAMAÑO DE DICHO BLOQUE
+	// EN CASO DE QUE LA MEMORIA ESTÉ LLENA, DEVOLVERÁ EL IDENTIFICADOR -1
+	public Map<Integer, Integer> lookForEmptySpaces(){
+		Map<Integer, Integer> ret = new HashMap<Integer, Integer>();
+		
+		return ret;
+	}
 
 	@Override
 	public int checkWhereProcessCanBeAdded(Process p) {
