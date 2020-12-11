@@ -8,10 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
-
 import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.ProcessAddingException;
+import model.exceptions.ProcessExecutionTimeExceeded;
 import model.exceptions.UnexistentProcessException;
 
 /**
@@ -150,7 +149,6 @@ public abstract class Processor {
 			}
 			
 		}
-		
 		return ret;
 	}
 	
@@ -217,6 +215,24 @@ public abstract class Processor {
 	}
 	
 	/**
+	 * Ask if process is terminated.
+	 *
+	 * @param p the process
+	 * @return true, if successful
+	 * @throws ProcessExecutionTimeExceeded the process execution time exceeded
+	 */
+	public boolean askIfProcessIsTerminated(Process p) throws ProcessExecutionTimeExceeded {
+		Objects.requireNonNull(p);
+		if(p.getInternalCounter() < p.getExecutionTime()) {
+			return false;
+		} else if(p.getInternalCounter() == p.getExecutionTime()) {
+			return true;
+		} else {
+			throw new ProcessExecutionTimeExceeded(p);
+		}
+	}
+	
+	/**
 	 * Kill process.
 	 * 
 	 * This method kills a process which is in execution. If process is in queue, returns false
@@ -239,11 +255,12 @@ public abstract class Processor {
 		
 	}
 	
-	public void decrementExecutionTime() {
-		for(Process it : this.getExecProcesses()) {
-			throw new RuntimeException("not implemented");
-			// I'm here
-		}
+	/**
+	 * Increment processes counter.
+	 */
+	public void incrementProcessesCounter() {
+		for(Process it : this.getExecProcesses())
+			it.incrementInternalCounter();
 	}
 	
 	/**
@@ -338,6 +355,15 @@ public abstract class Processor {
 			ret += "\n";
 		}
 		return ret;
+	}
+	
+	/**
+	 * Gets the queue as a TreeSet.
+	 *
+	 * @return the queue
+	 */
+	public Set<Process> getQueue(){
+		return this.queue;
 	}
 	
 }
