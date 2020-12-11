@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Objects;
+import java.util.Set;
 
 import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.InvalidProcessorTypeException;
@@ -41,6 +42,16 @@ public class MemoryPractice {
 		IProcessorLoader ip = new ProcessorLoaderFile(filePath);
 		ip.loadProcesses(processor);
 	}
+	
+	/*
+	 * Una vez construido el objeto que controla el programa (este), llamaremos al método run.
+	 * El método run será quien intente mover los métodos. Si no puede moverlos, capturará la excepción, correrá el tiempo y lo intentará en la siguiente fracción de tiempo.
+	 * Así mismo, en cada iteración, el procesador decrementará el executionTime y si resulta igual a 0, se cargará el proceso.
+	 * 
+	 * Esto significa que me toca implementar dos métodos nuevos en Processor, que serán:
+	 *  - decrementExecutionTime()
+	 *  - killProcess()
+	 */
 	
 	public void run() {
 		

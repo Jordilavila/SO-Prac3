@@ -8,8 +8,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.management.RuntimeErrorException;
+
 import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.ProcessAddingException;
+import model.exceptions.UnexistentProcessException;
 
 /**
  * The Class Processor.
@@ -172,13 +175,13 @@ public abstract class Processor {
 	public boolean isMemoryClean() { return execProcesses.isEmpty(); }
 	
 	/**
-	 * Quit process from execution.
+	 * Quit process from int array of execution processes.
 	 *
 	 * @param processHash the process hash
 	 */
 	protected void quitProcessFromExecution(int processHash) {
 		boolean exists = false;
-		for(Process it : this.getExecProcesses()) {
+		for(Process it : this.getCopyOfExecProcesses()) {
 			if(it.hashCode() == processHash) {
 				exists = true;
 				this.execProcesses.remove(it);
@@ -188,6 +191,58 @@ public abstract class Processor {
 			if(this.execHashList[i] == processHash) {
 				this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER;
 			}
+		}
+	}
+	
+	/**
+	 * Checks if is in execution.
+	 *
+	 * @param p the process
+	 * @return true, if is in execution
+	 */
+	public boolean isInExecution(Process p) {
+		Objects.requireNonNull(p);
+		return this.getExecProcesses().contains(p);
+	}
+	
+	/**
+	 * Checks if is queued.
+	 *
+	 * @param p the process
+	 * @return true, if is queued
+	 */
+	public boolean isQueued(Process p) {
+		Objects.requireNonNull(p);
+		return this.queue.contains(p);
+	}
+	
+	/**
+	 * Kill process.
+	 * 
+	 * This method kills a process which is in execution. If process is in queue, returns false
+	 *
+	 * @param p the process
+	 * @return true, if successful
+	 * @throws UnexistentProcessException the unexistent process exception
+	 */
+	public boolean killProcess(Process p) throws UnexistentProcessException {
+		Objects.requireNonNull(p);
+		if(this.isInExecution(p)) {
+			this.quitProcessFromExecution(p.hashCode());
+			this.execProcesses.remove(p);
+			return true;
+		} else if(this.isQueued(p)) {
+			return false;
+		} else {
+			throw new UnexistentProcessException(p);
+		}
+		
+	}
+	
+	public void decrementExecutionTime() {
+		for(Process it : this.getExecProcesses()) {
+			throw new RuntimeException("not implemented");
+			// I'm here
 		}
 	}
 	
@@ -209,17 +264,24 @@ public abstract class Processor {
 	public int getTotalMemory() { return this.totalMemory; }
 	
 	/**
-	 * Gets the exec processes.
+	 * Gets a DEFENSIVE COPY of the exec processes.
 	 *
 	 * @return a DEFENSIVE COPY of exec processes
 	 */
-	public Set<Process> getExecProcesses(){
+	public Set<Process> getCopyOfExecProcesses() {
 		Set<Process> ret = new HashSet<Process>();
 		for(Process it : this.execProcesses) {
 			ret.add(it.copy());
 		}
 		return ret;
 	}
+	
+	/**
+	 * Gets the exec processes.
+	 *
+	 * @return the exec processes
+	 */
+	public Set<Process> getExecProcesses() { return this.execProcesses; }
 	
 	/**
 	 * Gets the ordered processes list.

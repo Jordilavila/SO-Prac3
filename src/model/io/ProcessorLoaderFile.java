@@ -24,7 +24,7 @@ public class ProcessorLoaderFile implements IProcessorLoader {
 		}
 	}
 	
-	// process name arrivalTime executionTime neededMemory
+	// process name executionTime neededMemory
 
 	/**
 	 * Load processes.
@@ -39,6 +39,7 @@ public class ProcessorLoaderFile implements IProcessorLoader {
 		Objects.requireNonNull(p);
 		try {
 			String line;
+			int arrivalTime = 0;
 			while((line = this.br.readLine()) != null) {
 				String[] parts = line.split("\\s+");
 				int paramNumbers[] = null;
@@ -49,10 +50,10 @@ public class ProcessorLoaderFile implements IProcessorLoader {
 				// Command -> process:
 				if(parts[0].equals("process")) {
 					// Check length:
-					if(parts.length != 5) throw new MemoryPracticeIOException("Error in putCrafts from " + this.getClass().getName() + ": Invalid command");
+					if(parts.length != 4) throw new MemoryPracticeIOException("Error in putCrafts from " + this.getClass().getName() + ": Invalid command");
 					
 					try {
-						paramNumbers = new int[] {Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4])};
+						paramNumbers = new int[] {Integer.parseInt(parts[2]), Integer.parseInt(parts[3])};
 					} catch(NumberFormatException e) {
 						throw new MemoryPracticeIOException(e.getMessage());
 					}
@@ -63,9 +64,9 @@ public class ProcessorLoaderFile implements IProcessorLoader {
 					throw new MemoryPracticeIOException("Error in putCrafts from " + this.getClass().getName() + ": Invalid command");
 				
 				// If we haven't any exception...
-				p.addProcessToQueue(new Process(parts[1], paramNumbers[0], paramNumbers[1], paramNumbers[2]));
-				
-			}
+				p.addProcessToQueue(new Process(parts[1], arrivalTime, paramNumbers[0], paramNumbers[1]));
+				arrivalTime++;
+			} // WhileEND
 		} catch(IOException e) {
 			throw new MemoryPracticeIOException("IO exception in loadProcesses from " + this.getClass().getName());
 		}
