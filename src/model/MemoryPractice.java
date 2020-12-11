@@ -1,15 +1,16 @@
 package model;
 
 import java.util.Objects;
+import java.util.Set;
 
-import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.InvalidProcessorTypeException;
 import model.exceptions.MemoryPracticeIOException;
 import model.exceptions.ProcessAddingException;
-import model.exceptions.ProcessExecutionTimeExceeded;
 import model.exceptions.UnexistentProcessException;
 import model.io.IProcessorLoader;
+import model.io.IViewer;
 import model.io.ProcessorLoaderFile;
+import model.io.ViewerConsole;
 
 /**
  * The Class MemoryPractice.
@@ -25,6 +26,9 @@ public class MemoryPractice {
 	/** The file path. */
 	private String filePath;
 	
+	/** The counter of iterations. */
+	private int counterOfIterations;
+	
 	/**
 	 * Instantiates a new memory practice.
 	 *
@@ -32,10 +36,6 @@ public class MemoryPractice {
 	 * @param totalMemory the total memory
 	 * @param filePath the file path
 	 * @throws InvalidProcessorTypeException the invalid processor type exception
-	 * @throws MemoryPracticeIOException the memory practice IO exception
-	 * @throws InvalidProcessNeededMemory the invalid process needed memory
-	 * @throws NumberFormatException the number format exception
-	 * @throws ProcessAddingException the process adding exception
 	 */
 	public MemoryPractice(String type, int totalMemory, String filePath) throws InvalidProcessorTypeException {
 		Objects.requireNonNull(type);
@@ -46,13 +46,18 @@ public class MemoryPractice {
 		else throw new InvalidProcessorTypeException("The type of processor is not correct. It was " + type);
 		
 		this.filePath = filePath;
+		this.counterOfIterations = 0;
 	}
 	
-	/*
-	 * Esto significa que me toca implementar dos métodos nuevos en Processor, que serán:
-	 *  - incrementProcessesCounter()
-	 *  - killProcess()
+	/**
+	 * Start.
+	 *
+	 * @throws MemoryPracticeIOException the memory practice IO exception
 	 */
+	private void start() throws MemoryPracticeIOException {
+		IProcessorLoader ip = new ProcessorLoaderFile(this.filePath);
+		ip.loadProcesses(processor);
+	}
 	
 	/**
 	 * Run.
@@ -61,20 +66,17 @@ public class MemoryPractice {
 	 * This method is which will load the processes to the Processor.queue and will run them. If can't move them, will capture the exception and will let the iteration pass and will try to 
 	 * do it in the next iteration. Anyway, in each iteration, the processor will increments the internal counter of each process that be in execution.
 	 * Finally, if the internal counter of the process is equals to executionTime, the process will be killed.
-	 * @throws MemoryPracticeIOException 
-	 * @throws ProcessAddingException 
-	 * @throws NumberFormatException 
-	 * @throws InvalidProcessNeededMemory 
+	 * @throws MemoryPracticeIOException
 	 * @throws UnexistentProcessException 
 	 */
-	public void run() throws MemoryPracticeIOException, InvalidProcessNeededMemory, NumberFormatException, ProcessAddingException, UnexistentProcessException {
+	public void run(IViewer viewer) throws UnexistentProcessException, MemoryPracticeIOException {
 		boolean play = true;
-		
-		IProcessorLoader ip = new ProcessorLoaderFile(this.filePath);
-		ip.loadProcesses(processor);
-		
+		this.start();
+		viewer.show();
 		while(play) {
-			for(Process it : this.getProcessor().getQueue()) {
+			this.incrementCounter();
+			Set<Process> queue = this.getProcessor().getCopyOfQueue();
+			for(Process it : queue) {
 				try {
 					this.getProcessor().moveProcessFromQueueToExec(it);
 				} catch (ProcessAddingException e) {
@@ -82,20 +84,33 @@ public class MemoryPractice {
 				}
 			}
 			this.getProcessor().incrementProcessesCounter();
-			for(Process it : this.getProcessor().getExecProcesses()) {
-				try {
-					if(this.getProcessor().askIfProcessIsTerminated(it))
-						this.getProcessor().killProcess(it);
-				} catch (ProcessExecutionTimeExceeded e) {
-					this.getProcessor().killProcess(it);
-				}
-			}
-			if(this.getProcessor().isMemoryClean()) play = false;
+			this.getProcessor().killTerminatedProcesses(); // Supongo que el problema estará por aquí
 			
-			// View SHOW
+			// Se crea un bucle infinito porque no se están matando los procesos
 			
+			if(this.isFinalized()) play = false;
+			viewer.show();
 		} // WHILE END
+		
+		if(viewer instanceof ViewerConsole) viewer.show();
+		viewer.close();
 	}
+	
+	/**
+	 * Checks if is finalized.
+	 *
+	 * @return true, if is finalized
+	 */
+	public boolean isFinalized() {
+		if(this.getProcessor().isMemoryClean() && this.getProcessor().getQueue().isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * Increment iteration counter.
+	 */
+	private void incrementCounter() { this.counterOfIterations++; }
 	
 	/**
 	 * Gets the processor.
@@ -104,5 +119,35 @@ public class MemoryPractice {
 	 */
 	private Processor getProcessor() {
 		return this.processor;
+	}
+	
+	/**
+	 * Gets the counter.
+	 *
+	 * @return the counter
+	 */
+	private int getCounter() { return this.counterOfIterations; }
+	
+	/**
+	 * Gets the file path.
+	 *
+	 * @return the file path
+	 */
+	private String getFilePath() { return this.filePath; }
+	
+	/**
+	 * To string.
+	 *
+	 * @return the string
+	 */
+	@Override
+	public String toString() {
+		String ret = "";
+		ret += "===== MEMORY MANAGER =====\n";
+		ret += "=== DATA ===\n";
+		ret += "Iterations: " + this.getCounter(); ret += "\n";
+		ret += "File Path: " + this.getFilePath(); ret += "\n";
+		ret += this.getProcessor().toString();
+		return ret;
 	}
 }

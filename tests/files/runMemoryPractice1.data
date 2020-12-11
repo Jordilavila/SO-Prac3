@@ -1,0 +1,9 @@
+===== MEMORY MANAGER =====
+=== DATA ===
+Iterations: 0
+File Path: tests/files/runMemoryPractice1.in
+=== IN EXECUTION ===
+=== QUEUE ===
+[-1 A 499]
+[-1 B 999]
+

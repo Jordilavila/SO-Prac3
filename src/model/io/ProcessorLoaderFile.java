@@ -31,11 +31,9 @@ public class ProcessorLoaderFile implements IProcessorLoader {
 	 *
 	 * @param p the p
 	 * @throws MemoryPracticeIOException the memory practice IO exception
-	 * @throws InvalidProcessNeededMemory the invalid process needed memory
-	 * @throws ProcessAddingException the process adding exception
 	 */
 	@Override
-	public void loadProcesses(Processor p) throws MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException {
+	public void loadProcesses(Processor p) throws MemoryPracticeIOException {
 		Objects.requireNonNull(p);
 		try {
 			String line;
@@ -64,7 +62,12 @@ public class ProcessorLoaderFile implements IProcessorLoader {
 					throw new MemoryPracticeIOException("Error in putCrafts from " + this.getClass().getName() + ": Invalid command");
 				
 				// If we haven't any exception...
-				p.addProcessToQueue(new Process(parts[1], arrivalTime, paramNumbers[0], paramNumbers[1]));
+				try {
+					p.addProcessToQueue(new Process(parts[1], arrivalTime, paramNumbers[0], paramNumbers[1]));
+				} catch (InvalidProcessNeededMemory | ProcessAddingException e) {
+					// Nos saltamos el proceso:
+					System.err.println("Process generated an exception, but program continue running: " + e.getMessage());
+				}
 				arrivalTime++;
 			} // WhileEND
 		} catch(IOException e) {

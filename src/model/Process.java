@@ -2,6 +2,8 @@ package model;
 
 import java.util.Objects;
 
+import model.exceptions.ProcessExecutionTimeExceeded;
+
 /**
  * The Class Process.
  * @author Jordi Sellés Enríquez
@@ -72,6 +74,8 @@ public class Process {
 		this.internalCounter = p.getInternalCounter();
 		this.neededMemory = p.getNeededMemory();
 		this.processName = p.getProcessName();
+		this.inExecution = p.getInExecution();
+		this.initialPos = p.getInitialPos();
 	}
 	
 	/**
@@ -139,6 +143,16 @@ public class Process {
 	public void quitFromExecution() {
 		this.setInitialPos(-1);
 		this.inExecution = false; 
+	}
+	
+	public boolean isFinalized() throws ProcessExecutionTimeExceeded {
+		if(this.getExecutionTime() == this.getInternalCounter()) {
+			return true;
+		} else if(this.getInternalCounter() < this.getExecutionTime()) {
+			return false;
+		} else {
+			throw new ProcessExecutionTimeExceeded(this);
+		}
 	}
 	
 	/**

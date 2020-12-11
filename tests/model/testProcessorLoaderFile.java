@@ -7,9 +7,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.MemoryPracticeIOException;
-import model.exceptions.ProcessAddingException;
 import model.io.IProcessorLoader;
 import model.io.ProcessorLoaderFile;
 
@@ -50,7 +48,7 @@ public class testProcessorLoaderFile {
 	}
 	
 	@Test
-	public void testLoadProcessesEmptyFile() throws MemoryPracticeIOException, InvalidProcessNeededMemory, NumberFormatException, ProcessAddingException {
+	public void testLoadProcessesEmptyFile() throws MemoryPracticeIOException {
 		IProcessorLoader ip = new ProcessorLoaderFile(DIRFILES + "empty.in");
 		ip.loadProcesses(ryzen5);
 		compareLines(emptyProcessor, ryzen5.getExecProcesses().toString());
@@ -58,14 +56,14 @@ public class testProcessorLoaderFile {
 	}
 	
 	@Test
-	public void testLoadProcessOk1() throws MemoryPracticeIOException, InvalidProcessNeededMemory, NumberFormatException, ProcessAddingException {
+	public void testLoadProcessOk1() throws MemoryPracticeIOException {
 		IProcessorLoader ip = new ProcessorLoaderFile(DIRFILES + "loadProcessOk1.in");
 		ip.loadProcesses(ryzen5);
 		compareLines(processorOk1, ryzen5.toString());
 	}
 	
 	@Test
-	public void testLoadProcessWithFails() throws MemoryPracticeIOException, InvalidProcessNeededMemory, NumberFormatException, ProcessAddingException {
+	public void testLoadProcessWithFails() throws MemoryPracticeIOException {
 		IProcessorLoader ip = new ProcessorLoaderFile(DIRFILES + "loadProcessFail.in");
 		try {
 			ip.loadProcesses(ryzen5);

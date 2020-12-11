@@ -1,6 +1,7 @@
 package model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +44,13 @@ public class testProcess {
 		assertEquals(process1name, A.getProcessName());
 		assertEquals(process1arrivalTime, A.getArrivalTime());
 		assertEquals(process1executionTime, A.getExecutionTime());
+	}
+	
+	@Test
+	public void testCopy() {
+		Process A = new Process(process1name, process1arrivalTime, process1executionTime, process1neededMemory);
+		assertEquals(A, A.copy());
+		assertNotSame(A, A.copy());
 	}
 	
 	/*
