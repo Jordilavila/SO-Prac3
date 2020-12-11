@@ -16,12 +16,16 @@ import model.io.ProcessorLoaderFile;
 public class testProcessorLoaderFile {
 	final static String DIRFILES = "tests/files/";
 	Processor ryzen5;
-	static String emptyProcessor, processorOk1;
+	static String emptyProcessor, emptyProcessor2, processorOk1;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() {
 		emptyProcessor =
 				"[]";
+		
+		emptyProcessor2 =
+				  "=== IN EXECUTION ===\n"
+				+ "=== QUEUE ===\n";
 		
 		processorOk1 =
 				  "=== IN EXECUTION ===\n"
@@ -58,6 +62,17 @@ public class testProcessorLoaderFile {
 		IProcessorLoader ip = new ProcessorLoaderFile(DIRFILES + "loadProcessOk1.in");
 		ip.loadProcesses(ryzen5);
 		compareLines(processorOk1, ryzen5.toString());
+	}
+	
+	@Test
+	public void testLoadProcessWithFails() throws MemoryPracticeIOException, InvalidProcessNeededMemory, NumberFormatException, ProcessAddingException {
+		IProcessorLoader ip = new ProcessorLoaderFile(DIRFILES + "loadProcessFail.in");
+		try {
+			ip.loadProcesses(ryzen5);
+			fail("Debía lanzar una excepción");
+		} catch (MemoryPracticeIOException e) {
+			compareLines(emptyProcessor2, ryzen5.toString());
+		}
 	}
 	
 	

@@ -36,6 +36,7 @@ public class ProcessorLoaderFile implements IProcessorLoader {
 	 */
 	@Override
 	public void loadProcesses(Processor p) throws MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException {
+		Objects.requireNonNull(p);
 		try {
 			String line;
 			while((line = this.br.readLine()) != null) {
@@ -57,11 +58,8 @@ public class ProcessorLoaderFile implements IProcessorLoader {
 					}
 				}
 				
-				// Command -> endput:
-				if(parts[0].equals("endput")) return;
-				
 				// Command -> invalid command:
-				if(parts[0].equals("exit") == false && parts[0].equals("process") == false && parts[0].equals("endput") == false) 
+				if(parts[0].equals("exit") == false && parts[0].equals("process") == false) 
 					throw new MemoryPracticeIOException("Error in putCrafts from " + this.getClass().getName() + ": Invalid command");
 				
 				// If we haven't any exception...
