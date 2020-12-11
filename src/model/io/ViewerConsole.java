@@ -1,5 +1,5 @@
 package model.io;
 
-public class ViewerConsole {
+public class ViewerConsole implements IViewer {
 
 }
