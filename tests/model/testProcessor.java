@@ -101,7 +101,7 @@ public class testProcessor {
 		ryzen5.moveProcessFromQueueToExec(w);
 		
 		// [ InitPos NAME FinalPos ]
-		System.out.println(ryzen5.execProcesses.toString());
+		//System.out.println(ryzen5.execProcesses.toString());
 		
 		assertEquals(0, r.getInitialPos());
 		assertEquals(1000, t.getInitialPos());
@@ -138,5 +138,26 @@ public class testProcessor {
 		assertEquals(1000, t.getInitialPos());
 		assertEquals(1500, u.getInitialPos());
 		assertEquals(500, w.getInitialPos());
+	}
+	
+	@Test
+	public void testProcessorToString() throws InvalidProcessNeededMemory, ProcessAddingException {
+		Process r = new Process("r", 0, 1, 500);
+		Process s = new Process("s", 0, 1, 500);
+		Process t = new Process("t", 0, 1, 500);
+		Process u = new Process("u", 0, 1, 400);
+		Process w = new Process("w", 0, 1, 100);
+		ryzen5.addProcessToQueue(r);
+		ryzen5.addProcessToQueue(s);
+		ryzen5.addProcessToQueue(t);
+		ryzen5.addProcessToQueue(u);
+		ryzen5.addProcessToQueue(w);
+		assertTrue(ryzen5.moveProcessFromQueueToExec(r));
+		assertTrue(ryzen5.moveProcessFromQueueToExec(s));
+		assertTrue(ryzen5.moveProcessFromQueueToExec(t));
+		assertTrue(ryzen5.moveProcessFromQueueToExec(u));
+		ryzen5.moveProcessFromExecToQueue(s);
+		ryzen5.moveProcessFromQueueToExec(w);
+		System.out.println(ryzen5.toString());
 	}
 }

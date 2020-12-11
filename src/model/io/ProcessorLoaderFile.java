@@ -1,6 +1,8 @@
 package model.io;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -13,9 +15,13 @@ import model.exceptions.ProcessAddingException;
 public class ProcessorLoaderFile implements IProcessorLoader {
 	private BufferedReader br;
 	
-	public ProcessorLoaderFile(BufferedReader reader) {
-		Objects.requireNonNull(reader);
-		this.br = reader;
+	public ProcessorLoaderFile(String route) throws MemoryPracticeIOException {
+		Objects.requireNonNull(route);
+		try {
+			this.br = new BufferedReader(new FileReader(route));
+		} catch (FileNotFoundException e) {
+			throw new MemoryPracticeIOException(e.getMessage());
+		}
 	}
 	
 	// process name arrivalTime executionTime neededMemory

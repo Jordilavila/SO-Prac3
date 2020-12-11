@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -210,7 +211,7 @@ public abstract class Processor {
 	/**
 	 * Gets the exec processes.
 	 *
-	 * @return the exec processes
+	 * @return a DEFENSIVE COPY of exec processes
 	 */
 	public Set<Process> getExecProcesses(){
 		Set<Process> ret = new HashSet<Process>();
@@ -220,5 +221,89 @@ public abstract class Processor {
 		return ret;
 	}
 	
+	/**
+	 * Gets the ordered processes list.
+	 *
+	 * @return the ordered processes list as ArrayList
+	 */
+	private ArrayList<Process> getOrderedProcessesList(){
+		Set<Process> processes = this.execProcesses;
+		ArrayList<Process> orderedProcesses = new ArrayList<Process>();
+		int[] sizesList = new int[processes.size()];
+		
+		int i = 0;
+		for(Process it : processes) {
+			sizesList[i] = it.getInitialPos();
+			i++;
+		}
+		
+		for(int r = 1; r < sizesList.length; r++) {
+			for(int s = 0; s < (sizesList.length - r); s++) {
+				if(sizesList[s] > sizesList[s + 1]) {
+					int aux = sizesList[s];
+					sizesList[s] = sizesList[s + 1];
+					sizesList[s + 1] = aux;
+				}
+			}
+		}
+		
+		for(int itInt : sizesList) {
+			for(Process itPro : processes) {
+				if(itInt == itPro.getInitialPos()) orderedProcesses.add(itPro);
+			}
+		}
+		return orderedProcesses;
+	}
+	
+	/**
+	 * To string.
+	 *
+	 * @return the string
+	 */
+	@Override
+	public String toString() {
+		String ret = "=== IN EXECUTION ===\n";
+		ArrayList<Process> orderedProcesses = this.getOrderedProcessesList();
+		
+		for(Process it : orderedProcesses) {
+			ret += it.toString();
+			ret += "\n";
+		}
+		
+		ret += "=== QUEUE ===\n";
+		for(Process it : this.queue) {
+			ret += it.toString();
+			ret += "\n";
+		}
+		return ret;
+	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
