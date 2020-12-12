@@ -99,6 +99,11 @@ public class testMemoryManager {
 		} else {
 			fail("Error: No se pudo crear el fichero " + outFile);
 		}
+		
+		//Se compara salida con la solución
+		StringBuilder sbSolution = readFromFile(DIRFILES + "runMemoryPractice2WORST.sol");
+		StringBuilder sbObtenido = readFromFile(DIRFILES + "runMemoryPractice2WORST.data");
+		compareLines(sbSolution.toString(), sbObtenido.toString());
 	}
 	
 	@Test
