@@ -23,11 +23,14 @@ public class ProcessorWorst extends Processor {
 	@Override
 	protected int checkWhereProcessCanBeAdded(Process p) {
 		Objects.requireNonNull(p);
+		if(this.askIfMemoryIsFull()) return -1;
+		
 		Map<Integer, Integer> emptySpaces = this.lookForEmptySpaces();
-		if(emptySpaces.isEmpty()) { return 0; }
+		
 		int lastSize = 0;
 		int returnKey = -1;
 		Set<Integer> setKeys = emptySpaces.keySet();
+		
 		for(Integer it : setKeys) {
 			if(emptySpaces.containsKey(it)) {
 				int actualSize = emptySpaces.get(it);
@@ -39,7 +42,6 @@ public class ProcessorWorst extends Processor {
 				}
 			}
 		}
-		if(lastSize == this.totalMemory) { return -1; }
 		return returnKey;
 	}
 
