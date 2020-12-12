@@ -11,6 +11,7 @@ import java.util.Set;
 import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.ProcessAddingException;
 import model.exceptions.ProcessExecutionTimeExceeded;
+import model.exceptions.UnexistentProcessException;
 
 /**
  * The Class Processor.
@@ -66,33 +67,45 @@ public abstract class Processor {
 	 */
 	public boolean moveProcessFromQueueToExec(Process p) throws ProcessAddingException {
 		Objects.requireNonNull(p);
-		int checkWhereProcessCanBeAddedReturned = this.checkWhereProcessCanBeAdded(p);
-		if(checkWhereProcessCanBeAddedReturned != -1) {
-			for(int i = checkWhereProcessCanBeAddedReturned; i<(p.getNeededMemory() + checkWhereProcessCanBeAddedReturned); i++) {
+		if(this.isInExecution(p)) throw new ProcessAddingException(p, "Process already in execution");
+		if(this.execProcesses.isEmpty()) this.cleanAllMemory();
+		int pos = this.checkWhereProcessCanBeAdded(p);
+		if(pos != -1) {
+			for(int i = pos; i<(p.getNeededMemory() + pos); i++) {
 				this.execHashList[i] = p.hashCode();
 			}
-			p.setInitialPos(checkWhereProcessCanBeAddedReturned);
+			p.setInitialPos(pos);
 			if(!this.queue.remove(p)) throw new ProcessAddingException(p, "Process not exists");
-			if(this.execProcesses.add(p)) {
-				return true;
-			}
-			throw new ProcessAddingException(p, "Process already in execution");
+			if(this.execProcesses.add(p)) return true;
 		}
 		return false;
 	}
 	
 	/**
+	 * Clean section.
+	 * 
+	 * Cleans a section of execHashList
+	 *
+	 * @param init the init
+	 * @param end the end
+	 */
+	private void cleanSection(int init, int end) {
+		for(int i = init; i<(init + end); i++)
+			this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER;
+	}
+	
+	/**
 	 * Move process from execution to queue.
 	 *
-	 * @param p the p
+	 * @param p the process
 	 * @return true, if successful
 	 * @throws ProcessAddingException the process adding exception
 	 * @throws InvalidProcessNeededMemory the invalid process needed memory
 	 */
 	public void moveProcessFromExecToQueue(Process p) throws ProcessAddingException, InvalidProcessNeededMemory {
 		if(this.execProcesses.contains(p)) {
-			int processHash = p.hashCode();
-			this.quitProcessFromExecution(processHash);
+			this.cleanSection(p.getInitialPos(), p.getNeededMemory());
+			this.quitProcessFromExecution(p);
 			this.addProcessToQueue(p);
 			p.quitFromExecution();
 			return;
@@ -100,9 +113,17 @@ public abstract class Processor {
 		throw new ProcessAddingException(p, "The process is not running");
 	}
 	
+	/**
+	 * Move process from exec to killed.
+	 *
+	 * @param p the process
+	 * @throws InvalidProcessNeededMemory the invalid process needed memory
+	 * @throws ProcessAddingException the process adding exception
+	 */
 	public void moveProcessFromExecToKilled(Process p) throws InvalidProcessNeededMemory, ProcessAddingException {
 		if(this.isInExecution(p)) {
-			this.quitProcessFromExecution(p.hashCode());
+			this.cleanSection(p.getInitialPos(), p.getNeededMemory());
+			this.quitProcessFromExecution(p);
 			this.addProcessToKilledProcesses(p);
 			p.quitFromExecution();
 			return;
@@ -113,7 +134,7 @@ public abstract class Processor {
 	/**
 	 * Adds the process to killed processes.
 	 *
-	 * @param p the p
+	 * @param p the process
 	 * @return true, if successful
 	 * @throws InvalidProcessNeededMemory the invalid process needed memory
 	 * @throws ProcessAddingException the process adding exception
@@ -144,6 +165,20 @@ public abstract class Processor {
 	}
 	
 	/**
+	 * Ask if memory is full.
+	 *
+	 * @return true, if successful
+	 */
+	protected boolean askIfMemoryIsFull() {
+		boolean ret = true;
+		for(int i = 0; i<this.totalMemory && ret; i++) {
+			if(this.execHashList[i] == Processor.FREE_MEMORY_SPACE_IDENDIFYER)
+				ret = false;
+		}
+		return ret;
+	}
+	
+	/**
 	 * Look for empty spaces.
 	 *
 	 * @return a map with count and size of empty spaces. 
@@ -155,7 +190,15 @@ public abstract class Processor {
 		int emptySpaceSize = 0;
 		int lastKey = 0;
 		// Check if memory is clean and returns a null hashmap if successful:
-		if(this.isMemoryClean()) { return ret; }
+		if(this.isMemoryClean()) {
+			ret.put(0, this.totalMemory);
+			return ret; 
+		}
+		
+		// Check if memory is full and returns a 
+		if(this.askIfMemoryIsFull()) {
+			return ret;
+		}
 		
 		for(int i=0; i<this.totalMemory; i++) {
 			if(this.checkFreeMemoryPosition(this.execHashList[i])) {
@@ -202,21 +245,18 @@ public abstract class Processor {
 	public boolean isMemoryClean() { return execProcesses.isEmpty(); }
 	
 	/**
-	 * Quit process from int array of execution processes.
+	 * Quit process from execution.
 	 *
-	 * @param processHash the process hash
+	 * @param p the process
 	 */
-	protected void quitProcessFromExecution(int processHash) {
-		boolean exists = false;
-		for(Process it : this.getCopyOfExecProcesses()) {
-			if(it.hashCode() == processHash) {
-				exists = true;
-				this.execProcesses.remove(it);
-			}
-		}
-		for(int i=0; i<this.execHashList.length && exists; i++) {
-			if(this.execHashList[i] == processHash) {
-				this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER;
+	protected void quitProcessFromExecution(Process p) {
+		Objects.requireNonNull(p);
+		if(this.isInExecution(p)) {
+			for(int i = 0; i<this.execProcesses.size(); i++) {
+				if(this.execProcesses.get(i).equals(p)) {
+					this.execProcesses.remove(i);
+					return;
+				}
 			}
 		}
 	}
@@ -296,8 +336,8 @@ public abstract class Processor {
 	 *
 	 * @return a DEFENSIVE COPY of exec processes
 	 */
-	public Set<Process> getCopyOfExecProcesses() {
-		Set<Process> ret = new HashSet<Process>();
+	public ArrayList<Process> getCopyOfExecProcesses() {
+		ArrayList<Process> ret = new ArrayList<Process>();
 		for(Process it : this.execProcesses) {
 			ret.add(it.copy());
 		}
@@ -400,41 +440,6 @@ public abstract class Processor {
 		ArrayList<Process> ret = new ArrayList<Process>();
 		for(Process it : this.getQueue()) {
 			ret.add(it);
-		}
-		return ret;
-	}
-	
-	/**
-	 * Gets a copy of the finalized processes.
-	 *
-	 * @return the finalized processes
-	 */
-	public Set<Process> getCopyOfFinalizedProcesses() {
-		Set<Process> ret = new HashSet<Process>();
-		for(Process it : this.getExecProcesses()) {
-			try {
-				if(it.isFinalized()) {
-					ret.add(it.copy());
-				}
-			} catch (ProcessExecutionTimeExceeded e) {
-				// Aquí se habría pasado el tiempo de ejecución, por lo que nos lo cargamos
-				ret.add(it.copy());
-			}
-		}
-		return ret;
-	}
-	
-	public Set<Process> getFinalizedProcesses() {
-		Set<Process> ret = new HashSet<Process> ();
-		for(Process it : this.getExecProcesses()) {
-			try {
-				if(it.isFinalized()) {
-					ret.add(it);
-				}
-			} catch (ProcessExecutionTimeExceeded e) {
-				// Here the execution time is passed, so kill it
-				ret.add(it);
-			}
 		}
 		return ret;
 	}

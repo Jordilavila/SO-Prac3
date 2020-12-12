@@ -70,55 +70,21 @@ public class MemoryPractice {
 	 * This method is which will load the processes to the Processor.queue and will run them. If can't move them, will capture the exception and will let the iteration pass and will try to 
 	 * do it in the next iteration. Anyway, in each iteration, the processor will increments the internal counter of each process that be in execution.
 	 * Finally, if the internal counter of the process is equals to executionTime, the process will be killed.
-	 * @throws MemoryPracticeIOException
-	 * @throws UnexistentProcessException 
-	 * @throws ProcessAddingException 
-	 * @throws InvalidProcessNeededMemory 
+	 *
+	 * @param viewer the viewer
+	 * @throws MemoryPracticeIOException the memory practice IO exception
+	 * @throws MemoryPracticeRuntimeException the memory practice runtime exception
+	 * @throws ProcessExecutionTimeExceeded 
 	 */
-	public void run(IViewer viewer) throws UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException {
+	public void run(IViewer viewer) throws MemoryPracticeIOException, MemoryPracticeRuntimeException {
 		boolean play = true;
 		this.start();
 		viewer.show();
 		while(play) {
 			this.incrementCounter();
-			Set<Process> queue = this.getProcessor().getCopyOfQueue();
-			for(Process it : queue) {
-				try {
-					this.processor.moveProcessFromQueueToExec(it);
-				} catch (ProcessAddingException e) {
-					// Process can't be added because memory is full
-				}
-			}
-
-			Set<Process> finalized = this.processor.getCopyOfFinalizedProcesses();
-			for(Process it : finalized) {
-				this.processor.moveProcessFromExecToKilled(it);
-			}
 			
-			if(this.isFinalized()) play = false;
-			this.processor.incrementProcessesCounter();
-			viewer.show();
-		} // WHILE END
-		
-		if(viewer instanceof ViewerConsole) viewer.show();
-		viewer.close();
-	}
-	
-	public void run2(IViewer viewer) throws MemoryPracticeIOException, MemoryPracticeRuntimeException {
-		boolean play = true;
-		this.start();
-		viewer.show();
-		while(play) {
-			this.incrementCounter();
-			if(!this.processor.getQueueAsArrayList().isEmpty()) {
-				Process firstInQueue = this.getProcessor().getQueueAsArrayList().get(0);
-				try {
-					this.processor.moveProcessFromQueueToExec(firstInQueue);
-				} catch (ProcessAddingException e) {
-					throw new MemoryPracticeRuntimeException(e.getMessage());
-				}
-			}
-			ArrayList<Process> finalized = this.processor.getExecProcesses();
+			// KILLING PROCESSES
+			ArrayList<Process> finalized = this.processor.getCopyOfExecProcesses();
 			for(Process it : finalized) {
 				try {
 					if(it.isFinalized()) {
@@ -137,6 +103,17 @@ public class MemoryPractice {
 				}
 				
 			}
+			
+			// Adding from queue:
+			if(!this.processor.getQueueAsArrayList().isEmpty()) {
+				Process firstInQueue = this.getProcessor().getQueueAsArrayList().get(0);
+				try {
+					this.processor.moveProcessFromQueueToExec(firstInQueue);
+				} catch (ProcessAddingException e) {
+					throw new MemoryPracticeRuntimeException(e.getMessage());
+				}
+			}
+			
 			if(this.isFinalized()) play = false;
 			this.processor.incrementProcessesCounter();
 			viewer.show();

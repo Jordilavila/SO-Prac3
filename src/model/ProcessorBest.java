@@ -29,11 +29,11 @@ public class ProcessorBest extends Processor {
 	@Override
 	protected int checkWhereProcessCanBeAdded(Process p) {
 		Objects.requireNonNull(p);
+		if(this.askIfMemoryIsFull()) return -1;
+		
 		Map<Integer, Integer> emptySpaces = this.lookForEmptySpaces();
 		
-		if(emptySpaces.isEmpty()) { return 0; }
-		
-		int lastSize = this.totalMemory;
+		int lastSize = this.totalMemory + 1;
 		int returnKey = -1;
 		Set<Integer> setKeys = emptySpaces.keySet();
 		
@@ -48,8 +48,6 @@ public class ProcessorBest extends Processor {
 				}
 			}
 		}
-		
-		if(lastSize == this.totalMemory) { return -1; }
 		return returnKey;
 	}
 }
