@@ -14,8 +14,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import javax.security.auth.callback.ConfirmationCallback;
-
 import org.junit.Test;
 
 import model.exceptions.InvalidProcessNeededMemory;
@@ -23,7 +21,6 @@ import model.exceptions.InvalidProcessorTypeException;
 import model.exceptions.MemoryPracticeIOException;
 import model.exceptions.MemoryPracticeRuntimeException;
 import model.exceptions.ProcessAddingException;
-import model.exceptions.ProcessExecutionTimeExceeded;
 import model.exceptions.UnexistentProcessException;
 import model.io.IViewer;
 import model.io.ViewerConsole;

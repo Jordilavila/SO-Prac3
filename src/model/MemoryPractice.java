@@ -2,7 +2,6 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Set;
 
 import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.InvalidProcessorTypeException;
@@ -10,11 +9,9 @@ import model.exceptions.MemoryPracticeIOException;
 import model.exceptions.MemoryPracticeRuntimeException;
 import model.exceptions.ProcessAddingException;
 import model.exceptions.ProcessExecutionTimeExceeded;
-import model.exceptions.UnexistentProcessException;
 import model.io.IProcessorLoader;
 import model.io.IViewer;
 import model.io.ProcessorLoaderFile;
-import model.io.ViewerConsole;
 
 /**
  * The Class MemoryPractice.
