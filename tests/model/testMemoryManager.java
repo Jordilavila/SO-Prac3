@@ -85,6 +85,9 @@ public class testMemoryManager {
 		mP.run(iv);
 	}
 	
+	/*
+	 * Este test trabaja con el algoritmo de peor hueco y 5 procesos. Funciona perfectamente.
+	 */
 	@Test
 	public void testRunMemoryPractice2WORST() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
 		final String outFile = DIRFILES + "runMemoryPractice2WORST.data";
