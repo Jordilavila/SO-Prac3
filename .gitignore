@@ -1,3 +1,5 @@
 /bin/
 */.ds_store
 */*.data
+
+*.data
