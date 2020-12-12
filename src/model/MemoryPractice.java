@@ -1,11 +1,15 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
+import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.InvalidProcessorTypeException;
 import model.exceptions.MemoryPracticeIOException;
+import model.exceptions.MemoryPracticeRuntimeException;
 import model.exceptions.ProcessAddingException;
+import model.exceptions.ProcessExecutionTimeExceeded;
 import model.exceptions.UnexistentProcessException;
 import model.io.IProcessorLoader;
 import model.io.IViewer;
@@ -68,8 +72,10 @@ public class MemoryPractice {
 	 * Finally, if the internal counter of the process is equals to executionTime, the process will be killed.
 	 * @throws MemoryPracticeIOException
 	 * @throws UnexistentProcessException 
+	 * @throws ProcessAddingException 
+	 * @throws InvalidProcessNeededMemory 
 	 */
-	public void run(IViewer viewer) throws UnexistentProcessException, MemoryPracticeIOException {
+	public void run(IViewer viewer) throws UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException {
 		boolean play = true;
 		this.start();
 		viewer.show();
@@ -78,21 +84,63 @@ public class MemoryPractice {
 			Set<Process> queue = this.getProcessor().getCopyOfQueue();
 			for(Process it : queue) {
 				try {
-					this.getProcessor().moveProcessFromQueueToExec(it);
+					this.processor.moveProcessFromQueueToExec(it);
 				} catch (ProcessAddingException e) {
 					// Process can't be added because memory is full
 				}
 			}
-			this.getProcessor().incrementProcessesCounter();
-			this.getProcessor().killTerminatedProcesses(); // Supongo que el problema estará por aquí
-			
-			// Se crea un bucle infinito porque no se están matando los procesos
+
+			Set<Process> finalized = this.processor.getCopyOfFinalizedProcesses();
+			for(Process it : finalized) {
+				this.processor.moveProcessFromExecToKilled(it);
+			}
 			
 			if(this.isFinalized()) play = false;
+			this.processor.incrementProcessesCounter();
 			viewer.show();
 		} // WHILE END
 		
 		if(viewer instanceof ViewerConsole) viewer.show();
+		viewer.close();
+	}
+	
+	public void run2(IViewer viewer) throws MemoryPracticeIOException, MemoryPracticeRuntimeException {
+		boolean play = true;
+		this.start();
+		viewer.show();
+		while(play) {
+			this.incrementCounter();
+			if(!this.processor.getQueueAsArrayList().isEmpty()) {
+				Process firstInQueue = this.getProcessor().getQueueAsArrayList().get(0);
+				try {
+					this.processor.moveProcessFromQueueToExec(firstInQueue);
+				} catch (ProcessAddingException e) {
+					throw new MemoryPracticeRuntimeException(e.getMessage());
+				}
+			}
+			ArrayList<Process> finalized = this.processor.getExecProcesses();
+			for(Process it : finalized) {
+				try {
+					if(it.isFinalized()) {
+						try {
+							this.processor.moveProcessFromExecToKilled(it);
+						} catch (InvalidProcessNeededMemory | ProcessAddingException e) {
+							throw new MemoryPracticeRuntimeException(e.getMessage());
+						}
+					}
+				} catch (ProcessExecutionTimeExceeded e1) {
+					try {
+						this.processor.moveProcessFromExecToKilled(it);
+					} catch (InvalidProcessNeededMemory | ProcessAddingException e) {
+						throw new MemoryPracticeRuntimeException(e.getMessage());
+					}
+				}
+				
+			}
+			if(this.isFinalized()) play = false;
+			this.processor.incrementProcessesCounter();
+			viewer.show();
+		} // WHILE END
 		viewer.close();
 	}
 	

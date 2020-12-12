@@ -2,6 +2,7 @@ package model;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.junit.*;
@@ -67,7 +68,7 @@ public class testProcessor {
 		} catch (ProcessAddingException e) {
 			fail("Tendría que haberse añadido: " + e.toString());
 		}
-		Set<Process> execProcesses = ryzen5.getExecProcesses();
+		ArrayList<Process> execProcesses = ryzen5.getExecProcesses();
 		
 		// Returning process to Queue:
 		try {
@@ -75,7 +76,7 @@ public class testProcessor {
 		} catch (ProcessAddingException | InvalidProcessNeededMemory e) {
 			fail("Tendría que haberse quitado");
 		}
-		assertNotEquals("", execProcesses, ryzen5.getExecProcesses());
+		assertNotEquals(execProcesses, ryzen5.getExecProcesses());
 	}
 	
 	@Test
@@ -159,5 +160,27 @@ public class testProcessor {
 		ryzen5.moveProcessFromExecToQueue(s);
 		ryzen5.moveProcessFromQueueToExec(w);
 		System.out.println(ryzen5.toString());
+	}
+	
+	@Test
+	public void testAddingAndRemovingProcesses() throws ProcessAddingException, InvalidProcessNeededMemory {
+		A = new Process("A", 0, 1, 500);
+		try {
+			ryzen5.addProcessToQueue(A);
+		} catch (InvalidProcessNeededMemory | ProcessAddingException e) {
+			fail("No debería producir ninguna excepción");
+		}
+		System.out.println(ryzen5.toString());
+		try {
+			assertTrue(ryzen5.moveProcessFromQueueToExec(A));
+		} catch (ProcessAddingException e) {
+			fail("No debería producir ninguna excepción");
+		}
+		System.out.println(ryzen5.toString());
+		ryzen5.moveProcessFromExecToKilled(A);
+		System.out.println(ryzen5.toString());
+		
+		
+		
 	}
 }

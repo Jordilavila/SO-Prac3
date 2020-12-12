@@ -16,8 +16,11 @@ import java.util.Scanner;
 
 import org.junit.Test;
 
+import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.InvalidProcessorTypeException;
 import model.exceptions.MemoryPracticeIOException;
+import model.exceptions.MemoryPracticeRuntimeException;
+import model.exceptions.ProcessAddingException;
 import model.exceptions.UnexistentProcessException;
 import model.io.IViewer;
 import model.io.ViewerConsole;
@@ -30,7 +33,7 @@ public class testMemoryManager {
 	final static int totalMemory = 2000;
 
 	@Test
-	public void testRunMemoryPractice1() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException {
+	public void testRunMemoryPractice1() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException {
 		final String outFile = DIRFILES + "runMemoryPractice1.data";
 		mP = new MemoryPractice("BEST", totalMemory, DIRFILES + "runMemoryPractice1.in");
 		IViewer iv = new ViewerConsole(mP);
@@ -46,10 +49,11 @@ public class testMemoryManager {
 	}
 	
 	@Test
-	public void testRunMemoryPractice1_2() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException {
+	public void testRunMemoryPractice1_2() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException, MemoryPracticeRuntimeException {
 		mP = new MemoryPractice("BEST", totalMemory, DIRFILES + "runMemoryPractice1.in");
 		IViewer iv = new ViewerConsole(mP);
-		mP.run(iv);
+		//mP.run(iv);
+		mP.run2(iv);
 	}
 
 	

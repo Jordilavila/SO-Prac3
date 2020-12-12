@@ -25,7 +25,7 @@ public abstract class Processor {
 	protected int[] execHashList;
 	
 	/** The exec processes. */
-	protected Set<Process> execProcesses;
+	protected ArrayList<Process> execProcesses;
 	
 	/** The total memory. */
 	protected int totalMemory;
@@ -39,6 +39,8 @@ public abstract class Processor {
 	/** The Constant FREE_MEMORY_SPACE_IDENDIFYER. */
 	protected final static int FREE_MEMORY_SPACE_IDENDIFYER = -1;
 	
+	protected Set<Process> killedProcesses;
+	
 	/**
 	 * Instantiates a new processor.
 	 *
@@ -50,7 +52,8 @@ public abstract class Processor {
 		this.totalMemory = totalMemory;
 		this.execHashList = new int[totalMemory];
 		this.queue = new LinkedHashSet<Process>();
-		this.execProcesses = new HashSet<Process>();
+		this.execProcesses = new ArrayList<Process>();
+		this.killedProcesses = new LinkedHashSet<>();
 		for(int i=0; i<this.totalMemory; i++) this.execHashList[i] = Processor.FREE_MEMORY_SPACE_IDENDIFYER;
 	}
 	
@@ -97,6 +100,33 @@ public abstract class Processor {
 		throw new ProcessAddingException(p, "The process is not running");
 	}
 	
+	public void moveProcessFromExecToKilled(Process p) throws InvalidProcessNeededMemory, ProcessAddingException {
+		if(this.isInExecution(p)) {
+			this.quitProcessFromExecution(p.hashCode());
+			this.addProcessToKilledProcesses(p);
+			p.quitFromExecution();
+			return;
+		}
+		throw new ProcessAddingException(p, "The process is not running");
+	}
+	
+	/**
+	 * Adds the process to killed processes.
+	 *
+	 * @param p the p
+	 * @return true, if successful
+	 * @throws InvalidProcessNeededMemory the invalid process needed memory
+	 * @throws ProcessAddingException the process adding exception
+	 */
+	public boolean addProcessToKilledProcesses(Process p) throws InvalidProcessNeededMemory, ProcessAddingException {
+		Objects.requireNonNull(p);
+		if(p.getNeededMemory() < Processor.MINIMAL_PROCESS_MEMORY_SIZE || p.getNeededMemory() > this.getTotalMemory()) throw new InvalidProcessNeededMemory(p);
+		if(this.killedProcesses.add(p)) {
+			return true;
+		}
+		throw new ProcessAddingException(p, "Process already exists in killedProcesses");
+	}
+	
 	/**
 	 * Adds the process to queue.
 	 *
@@ -110,7 +140,7 @@ public abstract class Processor {
 		if(this.queue.add(p)) {
 			return true;
 		}
-		throw new ProcessAddingException(p, "Process already exists");
+		throw new ProcessAddingException(p, "Process already exists in queue");
 	}
 	
 	/**
@@ -199,7 +229,12 @@ public abstract class Processor {
 	 */
 	public boolean isInExecution(Process p) {
 		Objects.requireNonNull(p);
-		return this.getExecProcesses().contains(p);
+		for(Process it : this.execProcesses) {
+			if(it.equals(p)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -228,18 +263,6 @@ public abstract class Processor {
 			return true;
 		} else {
 			throw new ProcessExecutionTimeExceeded(p);
-		}
-	}
-	
-	public void killTerminatedProcesses() {
-		Set<Process> terminatedProcesses = this.getFinalizedProcesses();
-		for(Process it : terminatedProcesses) {
-			for(Process jt : this.execProcesses) {
-				if(it.equals(jt)) {
-					this.quitProcessFromExecution(jt.hashCode());
-					this.execProcesses.remove(jt);
-				}
-			}
 		}
 	}
 	
@@ -286,7 +309,7 @@ public abstract class Processor {
 	 *
 	 * @return the exec processes
 	 */
-	public Set<Process> getExecProcesses() { return this.execProcesses; }
+	public ArrayList<Process> getExecProcesses() { return this.execProcesses; }
 	
 	/**
 	 * Gets the ordered processes list.
@@ -294,7 +317,7 @@ public abstract class Processor {
 	 * @return the ordered processes list as ArrayList
 	 */
 	private ArrayList<Process> getOrderedProcessesList(){
-		Set<Process> processes = this.execProcesses;
+		ArrayList<Process> processes = this.execProcesses;
 		ArrayList<Process> orderedProcesses = new ArrayList<Process>();
 		int[] sizesList = new int[processes.size()];
 		
@@ -342,6 +365,12 @@ public abstract class Processor {
 			ret += it.toString();
 			ret += "\n";
 		}
+		
+		ret += "=== FINALIZED ===\n";
+		for(Process it : this.killedProcesses) {
+			ret += it.toString();
+			ret += "\n";
+		}
 		return ret;
 	}
 	
@@ -367,7 +396,20 @@ public abstract class Processor {
 		return ret;
 	}
 	
-	public Set<Process> getFinalizedProcesses() {
+	public ArrayList<Process> getQueueAsArrayList() {
+		ArrayList<Process> ret = new ArrayList<Process>();
+		for(Process it : this.getQueue()) {
+			ret.add(it);
+		}
+		return ret;
+	}
+	
+	/**
+	 * Gets a copy of the finalized processes.
+	 *
+	 * @return the finalized processes
+	 */
+	public Set<Process> getCopyOfFinalizedProcesses() {
 		Set<Process> ret = new HashSet<Process>();
 		for(Process it : this.getExecProcesses()) {
 			try {
@@ -377,6 +419,21 @@ public abstract class Processor {
 			} catch (ProcessExecutionTimeExceeded e) {
 				// Aquí se habría pasado el tiempo de ejecución, por lo que nos lo cargamos
 				ret.add(it.copy());
+			}
+		}
+		return ret;
+	}
+	
+	public Set<Process> getFinalizedProcesses() {
+		Set<Process> ret = new HashSet<Process> ();
+		for(Process it : this.getExecProcesses()) {
+			try {
+				if(it.isFinalized()) {
+					ret.add(it);
+				}
+			} catch (ProcessExecutionTimeExceeded e) {
+				// Here the execution time is passed, so kill it
+				ret.add(it);
 			}
 		}
 		return ret;
