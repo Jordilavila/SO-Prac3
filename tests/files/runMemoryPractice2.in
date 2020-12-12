@@ -1,0 +1,6 @@
+process A 8 500
+process B 7 500
+process C 3 500
+process D 5 400
+process E 1 100
+process F 2 100

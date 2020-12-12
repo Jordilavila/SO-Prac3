@@ -1,2 +1,3 @@
 process A 5 500
 process B 4 1000
+process C 8 1500

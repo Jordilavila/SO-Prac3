@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Scanner;
 
+import javax.security.auth.callback.ConfirmationCallback;
+
 import org.junit.Test;
 
 import model.exceptions.InvalidProcessNeededMemory;
@@ -21,6 +23,7 @@ import model.exceptions.InvalidProcessorTypeException;
 import model.exceptions.MemoryPracticeIOException;
 import model.exceptions.MemoryPracticeRuntimeException;
 import model.exceptions.ProcessAddingException;
+import model.exceptions.ProcessExecutionTimeExceeded;
 import model.exceptions.UnexistentProcessException;
 import model.io.IViewer;
 import model.io.ViewerConsole;
@@ -33,7 +36,7 @@ public class testMemoryManager {
 	final static int totalMemory = 2000;
 
 	@Test
-	public void testRunMemoryPractice1() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException {
+	public void testRunMemoryPractice1() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
 		final String outFile = DIRFILES + "runMemoryPractice1.data";
 		mP = new MemoryPractice("BEST", totalMemory, DIRFILES + "runMemoryPractice1.in");
 		IViewer iv = new ViewerConsole(mP);
@@ -52,11 +55,61 @@ public class testMemoryManager {
 	public void testRunMemoryPractice1_2() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException, MemoryPracticeRuntimeException {
 		mP = new MemoryPractice("BEST", totalMemory, DIRFILES + "runMemoryPractice1.in");
 		IViewer iv = new ViewerConsole(mP);
-		//mP.run(iv);
-		mP.run2(iv);
+		mP.run(iv);
 	}
 
+	/*
+	 * Este test trabaja con el algoritmo de mejor hueco y 5 procesos. Funciona perfectamente.
+	 */
+	@Test
+	public void testRunMemoryPractice2BEST() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
+		final String outFile = DIRFILES + "runMemoryPractice2BEST.data";
+		mP = new MemoryPractice("BEST", 2000, DIRFILES + "runMemoryPractice2.in");
+		IViewer iv = new ViewerConsole(mP);
+		PrintStream ps = standardIO2File(outFile);
+		if(ps != null) {
+			mP.run(iv);
+			assertTrue(mP.isFinalized());
+			System.setOut(System.out);
+			ps.close();
+		} else {
+			fail("Error: No se pudo crear el fichero " + outFile);
+		}
+		
+		//Se compara salida con la solución
+		StringBuilder sbSolution = readFromFile(DIRFILES + "runMemoryPractice2BEST.sol");
+		StringBuilder sbObtenido = readFromFile(DIRFILES + "runMemoryPractice2BEST.data");
+		compareLines(sbSolution.toString(), sbObtenido.toString());
+	}
+	@Test
+	public void testRunMemoryPractice2BEST_CONSOLE() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException, MemoryPracticeRuntimeException {
+		mP = new MemoryPractice("BEST", totalMemory, DIRFILES + "runMemoryPractice2.in");
+		IViewer iv = new ViewerConsole(mP);
+		mP.run(iv);
+	}
 	
+	@Test
+	public void testRunMemoryPractice2WORST() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
+		final String outFile = DIRFILES + "runMemoryPractice2WORST.data";
+		mP = new MemoryPractice("WORST", 2000, DIRFILES + "runMemoryPractice2.in");
+		IViewer iv = new ViewerConsole(mP);
+		PrintStream ps = standardIO2File(outFile);
+		if(ps != null) {
+			mP.run(iv);
+			assertTrue(mP.isFinalized());
+			System.setOut(System.out);
+			ps.close();
+		} else {
+			fail("Error: No se pudo crear el fichero " + outFile);
+		}
+	}
+	
+	@Test
+	public void testRunMemoryPractice2WORST_CONSOLE() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
+		mP = new MemoryPractice("WORST", totalMemory, DIRFILES + "runMemoryPractice2.in");
+		IViewer iv = new ViewerConsole(mP);
+		mP.run(iv);
+	}
 	
 	
 	// FUNCIONES AUXILIARES
