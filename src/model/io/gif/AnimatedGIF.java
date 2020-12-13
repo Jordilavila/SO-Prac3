@@ -7,7 +7,7 @@ import com.gif4j.light.GifEncoder;
 import com.gif4j.light.GifFrame;
 import com.gif4j.light.GifImage;
 
-import model.exceptions.io.BattleshipIOException;
+import model.exceptions.MemoryPracticeIOException;
 
 /**
  * It generates and animated GIF
@@ -32,11 +32,11 @@ public class AnimatedGIF {
 	 * @param gif the frame to be added
 	 * @throws BattleshipIOException if there is an internal error of the library
 	 */
-	public void addFrame(FrameGIF gif) throws BattleshipIOException {
+	public void addFrame(FrameGIF gif) throws MemoryPracticeIOException {
         try {
 			gifImage.addGifFrame(new GifFrame(gif.getBufferedImage()));
 		} catch (InterruptedException e) {
-			throw new BattleshipIOException("Error: problem adding frame");
+			throw new MemoryPracticeIOException("Error: problem adding frame");
 		}
 	}
 	
@@ -45,11 +45,11 @@ public class AnimatedGIF {
 	 * @param file 
 	 * @throws BattleshipIOException if there is an I/O exception
 	 */
-	public void saveFile(File file) throws BattleshipIOException {
+	public void saveFile(File file) throws MemoryPracticeIOException {
 	    try {
 	        GifEncoder.encode(gifImage, file);
 		} catch (IOException e) {
-			throw new BattleshipIOException("Error: problem saving file");
+			throw new MemoryPracticeIOException("Error: problem saving file");
 		}
 	}
 }

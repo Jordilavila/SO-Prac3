@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import model.exceptions.io.BattleshipIOException;
+import model.exceptions.MemoryPracticeIOException;
 
 /**
  * It generates a GIF frame using GIF4J
@@ -55,9 +55,9 @@ public class FrameGIF {
 	 * @param colour colour to be used
 	 * @throws BattleshipIOException if the positions is out of limits
 	 */
-	public void printSquare(int x, int y, Color colour) throws BattleshipIOException {
+	public void printSquare(int x, int y, Color colour) throws MemoryPracticeIOException {
 		if (x<0 || x>=width || y<0 || y>=heigh) {
-			throw new BattleshipIOException("Error: wrong position to print a square: ("+ x +","+ y +")");
+			throw new MemoryPracticeIOException("Error: wrong position to print a square: ("+ x +","+ y +")");
 		}
 		
 		ig2.setPaint(colour);
@@ -79,11 +79,11 @@ public class FrameGIF {
 	 * @param file the file
 	 * @throws BattleshipIOException the battleship IO exception
 	 */
-	public void saveFile(File file) throws BattleshipIOException {
+	public void saveFile(File file) throws MemoryPracticeIOException {
 	    try {
 			ImageIO.write(bi, "GIF", file);
 		} catch (IOException e) {
-			throw new BattleshipIOException("Error: problem saving file");
+			throw new MemoryPracticeIOException("Error: problem saving file");
 		}
 	}
 	

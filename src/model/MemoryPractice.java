@@ -14,10 +14,13 @@ import model.io.IViewer;
 import model.io.ProcessorLoaderFile;
 
 /**
- * The Class MemoryPractice.
- * @author Jordi Sellés Enríquez
+ * This object works as a memory manager. Once the object that controls the program is built, we will call MemoryPractice.run() method.
+ * This method is the one that will load the processes to the Processor.queue and will run them. If it can't move them, it will capture the exception
+ * and let the iteration pass and it will try to do it in the next iteration.
+ * Anyway, in each iteration the processor will increment the internal counter of each processes that are in execution.
+ * Finally, if the internal counter of the process is equals to executionTime, the process will be killed.
  * 
- * This object works as a memory manager
+ * @author Jordi Sellés Enríquez
  */
 public class MemoryPractice {
 	
@@ -63,15 +66,17 @@ public class MemoryPractice {
 	/**
 	 * Run.
 	 * 
-	 * Once the object that controls the program (this) is built, we will call MemoryPractice.run() method.
-	 * This method is which will load the processes to the Processor.queue and will run them. If can't move them, will capture the exception and will let the iteration pass and will try to 
-	 * do it in the next iteration. Anyway, in each iteration, the processor will increments the internal counter of each process that be in execution.
+	 * Once the object that controls the program is built, we will call MemoryPractice.run() method.
+	 * This method is the one that will load the processes to the Processor.queue and will run them. If it can't move them, it will capture the exception
+	 * and let the iteration pass and it will try to do it in the next iteration.
+	 * Anyway, in each iteration the processor will increment the internal counter of each processes that are in execution.
 	 * Finally, if the internal counter of the process is equals to executionTime, the process will be killed.
 	 *
 	 * @param viewer the viewer
 	 * @throws MemoryPracticeIOException the memory practice IO exception
 	 * @throws MemoryPracticeRuntimeException the memory practice runtime exception
-	 * @throws ProcessExecutionTimeExceeded 
+	 * @see moveProcessFromExecToKilled
+	 * @see moveProcessFromQueueToExec
 	 */
 	public void run(IViewer viewer) throws MemoryPracticeIOException, MemoryPracticeRuntimeException {
 		boolean play = true;
@@ -138,6 +143,7 @@ public class MemoryPractice {
 	 * Gets the processor.
 	 *
 	 * @return the processor
+	 * @see Processor
 	 */
 	private Processor getProcessor() {
 		return this.processor;
