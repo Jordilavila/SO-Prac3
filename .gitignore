@@ -4,3 +4,5 @@
 *.data
 
 */.DS_Store
+
+src/model/io/.DS_Store
