@@ -434,6 +434,11 @@ public abstract class Processor {
 		return ret;
 	}
 	
+	/**
+	 * Gets the queue as array list.
+	 *
+	 * @return the queue as array list
+	 */
 	public ArrayList<Process> getQueueAsArrayList() {
 		ArrayList<Process> ret = new ArrayList<Process>();
 		for(Process it : this.getQueue()) {
@@ -442,31 +447,3 @@ public abstract class Processor {
 		return ret;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
