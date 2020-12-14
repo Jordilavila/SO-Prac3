@@ -9,7 +9,6 @@ import java.util.Set;
 
 import model.exceptions.InvalidProcessNeededMemory;
 import model.exceptions.ProcessAddingException;
-import model.exceptions.ProcessExecutionTimeExceeded;
 
 /**
  * The Class Processor.
@@ -288,24 +287,6 @@ public abstract class Processor {
 	}
 	
 	/**
-	 * Ask if process is terminated.
-	 *
-	 * @param p the process
-	 * @return true, if successful
-	 * @throws ProcessExecutionTimeExceeded the process execution time exceeded
-	 */
-	public boolean askIfProcessIsTerminated(Process p) throws ProcessExecutionTimeExceeded {
-		Objects.requireNonNull(p);
-		if(p.getInternalCounter() < p.getExecutionTime()) {
-			return false;
-		} else if(p.getInternalCounter() == p.getExecutionTime()) {
-			return true;
-		} else {
-			throw new ProcessExecutionTimeExceeded(p);
-		}
-	}
-	
-	/**
 	 * Increment processes counter.
 	 */
 	public void incrementProcessesCounter() {
@@ -420,19 +401,6 @@ public abstract class Processor {
 	 */
 	public Set<Process> getQueue(){
 		return this.queue;
-	}
-	
-	/**
-	 * Gets the copy of queue as a TreeSet.
-	 *
-	 * @return the copy of queue
-	 */
-	public Set<Process> getCopyOfQueue() {
-		Set<Process> ret = new LinkedHashSet<Process>();
-		for(Process it : this.getQueue()) {
-			ret.add(it.copy());
-		}
-		return ret;
 	}
 	
 	/**

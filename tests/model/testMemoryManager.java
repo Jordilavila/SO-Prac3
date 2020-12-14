@@ -78,6 +78,7 @@ public class testMemoryManager {
 		StringBuilder sbObtenido = readFromFile(DIRFILES + "runMemoryPractice2BEST.data");
 		compareLines(sbSolution.toString(), sbObtenido.toString());
 	}
+	
 	@Test
 	public void testRunMemoryPractice2BEST_CONSOLE() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException, MemoryPracticeRuntimeException {
 		mP = new MemoryPractice("BEST", totalMemory, DIRFILES + "runMemoryPractice2.in");
