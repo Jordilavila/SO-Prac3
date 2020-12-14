@@ -24,6 +24,7 @@ import model.exceptions.ProcessAddingException;
 import model.exceptions.UnexistentProcessException;
 import model.io.IViewer;
 import model.io.ViewerConsole;
+import model.io.ViewerGIF;
 
 // process name executionTime neededMemory
 
@@ -59,7 +60,7 @@ public class testMemoryManager {
 	 * Este test trabaja con el algoritmo de mejor hueco y 5 procesos. Funciona perfectamente.
 	 */
 	@Test
-	public void testRunMemoryPractice2BEST() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
+	public void testRunMemoryPractice2BEST_FILE() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
 		final String outFile = DIRFILES + "runMemoryPractice2BEST.data";
 		mP = new MemoryPractice("BEST", 2000, DIRFILES + "runMemoryPractice2.in");
 		IViewer iv = new ViewerConsole(mP);
@@ -86,11 +87,18 @@ public class testMemoryManager {
 		mP.run(iv);
 	}
 	
+	@Test
+	public void testRunMemoryPractice2BEST_GIF() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
+		mP = new MemoryPractice(ProcessorFactory.createProcessor("ProcessorBest", 2000), DIRFILES + "runMemoryPractice2.in");
+		IViewer iv = new ViewerGIF(mP);
+		mP.run(iv);
+	}
+	
 	/*
 	 * Este test trabaja con el algoritmo de peor hueco y 5 procesos. Funciona perfectamente.
 	 */
 	@Test
-	public void testRunMemoryPractice2WORST() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
+	public void testRunMemoryPractice2WORST_FILE() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
 		final String outFile = DIRFILES + "runMemoryPractice2WORST.data";
 		mP = new MemoryPractice("WORST", 2000, DIRFILES + "runMemoryPractice2.in");
 		IViewer iv = new ViewerConsole(mP);
@@ -115,6 +123,14 @@ public class testMemoryManager {
 		mP = new MemoryPractice("WORST", totalMemory, DIRFILES + "runMemoryPractice2.in");
 		IViewer iv = new ViewerConsole(mP);
 		mP.run(iv);
+	}
+	
+	@Test
+	public void testRunMemoryPracticeEmptyGIF() throws InvalidProcessorTypeException {
+		mP = new MemoryPractice(ProcessorFactory.createProcessor("ProcessorBest", 2000), DIRFILES + "empty.in");
+		IViewer vg = new ViewerGIF(mP);
+		vg.show();
+		vg.close();
 	}
 	
 	

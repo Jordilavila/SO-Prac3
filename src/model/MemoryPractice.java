@@ -53,6 +53,14 @@ public class MemoryPractice {
 		this.counterOfIterations = 0;
 	}
 	
+	public MemoryPractice(Processor processor, String filePath) {
+		Objects.requireNonNull(processor);
+		Objects.requireNonNull(filePath);
+		
+		this.filePath = filePath;
+		this.processor = processor;
+	}
+	
 	/**
 	 * Start.
 	 *
@@ -145,7 +153,7 @@ public class MemoryPractice {
 	 * @return the processor
 	 * @see Processor
 	 */
-	private Processor getProcessor() {
+	public Processor getProcessor() {
 		return this.processor;
 	}
 	

@@ -373,21 +373,51 @@ public abstract class Processor {
 	@Override
 	public String toString() {
 		String ret = "=== IN EXECUTION ===\n";
+		ret += this.getExecutionString();
+		ret += "=== QUEUE ===\n";
+		ret += this.getQueueString();
+		ret += "=== FINALIZED ===\n";
+		ret += this.getFinalizedString();
+		return ret;
+	}
+	
+	/**
+	 * Gets the finalized string.
+	 *
+	 * @return the finalized string
+	 */
+	public String getFinalizedString() {
+		String ret = "";
+		for(Process it : this.killedProcesses) {
+			ret += it.toString();
+			ret += "\n";
+		}
+		return ret;
+	}
+	
+	/**
+	 * Gets the execution string.
+	 *
+	 * @return the execution string
+	 */
+	public String getExecutionString() {
+		String ret = "";
 		ArrayList<Process> orderedProcesses = this.getOrderedProcessesList();
-		
 		for(Process it : orderedProcesses) {
 			ret += it.toString();
 			ret += "\n";
 		}
-		
-		ret += "=== QUEUE ===\n";
+		return ret;
+	}
+	
+	/**
+	 * Gets the queue string.
+	 *
+	 * @return the queue string
+	 */
+	public String getQueueString() {
+		String ret = "";
 		for(Process it : this.queue) {
-			ret += it.toString();
-			ret += "\n";
-		}
-		
-		ret += "=== FINALIZED ===\n";
-		for(Process it : this.killedProcesses) {
 			ret += it.toString();
 			ret += "\n";
 		}
