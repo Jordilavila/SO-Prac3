@@ -5,11 +5,11 @@ import java.util.Set;
 import java.util.Map;
 
 /**
- * The Class ProcessorBest.
+ * This class implements a processor with best-fit algorithm
+ * 
  * @author Jordi Sellés Enríquez
  */
 public class ProcessorBest extends Processor {
-	// https://1984.lsi.us.es/wiki-ssoo/index.php/Implementaci%C3%B3n_de_ajustes_en_Java
 
 	/**
 	 * Instantiates a new ProcessorBest.

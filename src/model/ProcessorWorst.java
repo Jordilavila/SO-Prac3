@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * The Class ProcessorWorst.
+ * This class implements a Processor with worst-fit algorithm.
  * @author Jordi Sellés Enríquez
  */
 public class ProcessorWorst extends Processor {
