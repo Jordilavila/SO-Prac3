@@ -3,10 +3,10 @@ package model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import model.exceptions.InvalidProcessorTypeException;
 
 public class testProcessorFactory {
 
@@ -21,8 +21,7 @@ public class testProcessorFactory {
 	public void testProcessorFactoryCreate() {
 		try {
 			ryzen5 = ProcessorFactory.createProcessor("ProcessorBest", 2000);
-		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (InvalidProcessorTypeException e) {
 			fail("No debería de lanzar excepciones: " + e.getMessage());
 		}
 		assertEquals(ProcessorBest.class, ryzen5.getClass());
@@ -30,8 +29,7 @@ public class testProcessorFactory {
 		
 		try {
 			i5 = ProcessorFactory.createProcessor("ProcessorWorst", 2000);
-		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (InvalidProcessorTypeException e) {
 			fail("No debería de lanzar excepciones: " + e.getMessage());
 		}
 		assertEquals(ProcessorBest.class, ryzen5.getClass());
@@ -44,13 +42,9 @@ public class testProcessorFactory {
 		Processor unexistent;
 		try {
 			unexistent = ProcessorFactory.createProcessor("Pepe", 2000);
-			fail("Debería de haber lanzado una ClassNotFoundException");
-		} catch (ClassNotFoundException e) {
+			fail("Debería de haber lanzado una InvalidProcessorTypeException");
+		} catch (InvalidProcessorTypeException e) {
 			// Bien
-			
-		} catch (NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			fail("Debería de haber lanzado una ClassNotFoundException");
 		}
 	}
 }
