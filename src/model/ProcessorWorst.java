@@ -10,6 +10,11 @@ import java.util.Set;
  */
 public class ProcessorWorst extends Processor {
 
+	/**
+	 * Instantiates a new processor worst.
+	 *
+	 * @param totalMemory the total memory
+	 */
 	public ProcessorWorst(int totalMemory) {
 		super(totalMemory);
 	}
