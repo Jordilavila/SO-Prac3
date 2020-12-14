@@ -38,6 +38,7 @@ public abstract class Processor {
 	/** The Constant FREE_MEMORY_SPACE_IDENDIFYER. */
 	protected final static int FREE_MEMORY_SPACE_IDENDIFYER = -1;
 	
+	/** The killed processes. */
 	protected Set<Process> killedProcesses;
 	
 	/**
