@@ -134,7 +134,7 @@ public class ViewerGIF implements IViewer {
 		}
 		
 		for(Process it : exec) {
-			ret.
+			//ret.
 		}
 		
 		return ret;
