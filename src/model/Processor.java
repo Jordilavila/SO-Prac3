@@ -59,7 +59,7 @@ public abstract class Processor {
 	/**
 	 * Move process from queue to exec.
 	 *
-	 * @param p the p
+	 * @param p the process
 	 * @return true, if successful
 	 * @throws ProcessAddingException the process adding exception
 	 */

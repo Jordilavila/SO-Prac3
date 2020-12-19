@@ -145,6 +145,12 @@ public class Process {
 		this.inExecution = false; 
 	}
 	
+	/**
+	 * Checks if is finalized.
+	 *
+	 * @return true, if is finalized
+	 * @throws ProcessExecutionTimeExceeded the process execution time exceeded
+	 */
 	public boolean isFinalized() throws ProcessExecutionTimeExceeded {
 		if(this.getExecutionTime() == this.getInternalCounter()) {
 			return true;
