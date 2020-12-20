@@ -36,23 +36,9 @@ public class MemoryPractice {
 	/**
 	 * Instantiates a new memory practice.
 	 *
-	 * @param type the type
-	 * @param totalMemory the total memory
+	 * @param processor the processor
 	 * @param filePath the file path
-	 * @throws InvalidProcessorTypeException the invalid processor type exception
 	 */
-	public MemoryPractice(String type, int totalMemory, String filePath) throws InvalidProcessorTypeException {
-		Objects.requireNonNull(type);
-		Objects.requireNonNull(filePath);
-		
-		if(type.equals("BEST")) processor = new ProcessorBest(totalMemory);
-		else if(type.equals("WORST")) processor = new ProcessorWorst(totalMemory);
-		else throw new InvalidProcessorTypeException("The type of processor is not correct. It was " + type);
-		
-		this.filePath = filePath;
-		this.counterOfIterations = 0;
-	}
-	
 	public MemoryPractice(Processor processor, String filePath) {
 		Objects.requireNonNull(processor);
 		Objects.requireNonNull(filePath);

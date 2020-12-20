@@ -36,7 +36,7 @@ public class testMemoryManager {
 	@Test
 	public void testRunMemoryPractice1() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
 		final String outFile = DIRFILES + "runMemoryPractice1.data";
-		mP = new MemoryPractice("BEST", totalMemory, DIRFILES + "runMemoryPractice1.in");
+		mP = new MemoryPractice(ProcessorFactory.createProcessor("ProcessorBest", totalMemory), DIRFILES + "runMemoryPractice2.in");
 		IViewer iv = new ViewerConsole(mP);
 		PrintStream ps = standardIO2File(outFile);
 		if(ps != null) {
@@ -51,7 +51,7 @@ public class testMemoryManager {
 	
 	@Test
 	public void testRunMemoryPractice1_2() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException, MemoryPracticeRuntimeException {
-		mP = new MemoryPractice("BEST", totalMemory, DIRFILES + "runMemoryPractice1.in");
+		mP = new MemoryPractice(ProcessorFactory.createProcessor("ProcessorBest", totalMemory), DIRFILES + "runMemoryPractice2.in");
 		IViewer iv = new ViewerConsole(mP);
 		mP.run(iv);
 	}
@@ -62,7 +62,7 @@ public class testMemoryManager {
 	@Test
 	public void testRunMemoryPractice2BEST_FILE() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
 		final String outFile = DIRFILES + "runMemoryPractice2BEST.data";
-		mP = new MemoryPractice("BEST", 2000, DIRFILES + "runMemoryPractice2.in");
+		mP = new MemoryPractice(ProcessorFactory.createProcessor("ProcessorBest", totalMemory), DIRFILES + "runMemoryPractice2.in");
 		IViewer iv = new ViewerConsole(mP);
 		PrintStream ps = standardIO2File(outFile);
 		if(ps != null) {
@@ -82,7 +82,7 @@ public class testMemoryManager {
 	
 	@Test
 	public void testRunMemoryPractice2BEST_CONSOLE() throws InvalidProcessorTypeException, UnexistentProcessException, MemoryPracticeIOException, InvalidProcessNeededMemory, ProcessAddingException, MemoryPracticeRuntimeException {
-		mP = new MemoryPractice("BEST", totalMemory, DIRFILES + "runMemoryPractice2.in");
+		mP = new MemoryPractice(ProcessorFactory.createProcessor("ProcessorBest", totalMemory), DIRFILES + "runMemoryPractice2.in");
 		IViewer iv = new ViewerConsole(mP);
 		mP.run(iv);
 	}
@@ -100,7 +100,7 @@ public class testMemoryManager {
 	@Test
 	public void testRunMemoryPractice2WORST_FILE() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
 		final String outFile = DIRFILES + "runMemoryPractice2WORST.data";
-		mP = new MemoryPractice("WORST", 2000, DIRFILES + "runMemoryPractice2.in");
+		mP = new MemoryPractice(ProcessorFactory.createProcessor("ProcessorWorst", 2000), DIRFILES + "runMemoryPractice2.in");
 		IViewer iv = new ViewerConsole(mP);
 		PrintStream ps = standardIO2File(outFile);
 		if(ps != null) {
@@ -120,7 +120,7 @@ public class testMemoryManager {
 	
 	@Test
 	public void testRunMemoryPractice2WORST_CONSOLE() throws InvalidProcessorTypeException, MemoryPracticeIOException, MemoryPracticeRuntimeException {
-		mP = new MemoryPractice("WORST", totalMemory, DIRFILES + "runMemoryPractice2.in");
+		mP = new MemoryPractice(ProcessorFactory.createProcessor("ProcessorWorst", 2000), DIRFILES + "runMemoryPractice2.in");
 		IViewer iv = new ViewerConsole(mP);
 		mP.run(iv);
 	}
